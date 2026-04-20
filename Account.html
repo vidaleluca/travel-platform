@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>My bookings — SocialTravels</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .acc-hero{
+    background:linear-gradient(135deg,var(--teal-900),var(--teal-700));
+    color:#fff;padding:50px 0 80px;position:relative;overflow:hidden;
+  }
+  .acc-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 400px at 80% 20%,rgba(232,99,74,.25),transparent 60%);pointer-events:none}
+  .acc-hero .wrap{position:relative;display:flex;align-items:center;gap:24px}
+  .acc-avatar{width:76px;height:76px;border-radius:50%;background:var(--coral) center/cover;border:3px solid rgba(255,255,255,.3);display:grid;place-items:center;font-family:'Bebas Neue';font-size:32px;letter-spacing:.02em}
+  .acc-hero h1{font-family:'Bebas Neue';font-size:48px;letter-spacing:.02em;margin:0;color:#fff;font-weight:400;line-height:1}
+  .acc-hero p{opacity:.85;margin:6px 0 0;font-size:14px}
+  .acc-chips{margin-left:auto;display:flex;gap:16px}
+  .acc-chip-stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px 20px;text-align:center}
+  .acc-chip-stat .num{font-family:'Bebas Neue';font-size:28px;letter-spacing:.04em}
+  .acc-chip-stat .lbl{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.8;font-weight:700;margin-top:2px}
+
+  .layout{display:grid;grid-template-columns:240px 1fr;gap:40px;padding:48px 0 40px;margin-top:-40px;position:relative;z-index:2}
+  .acc-side{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm);align-self:start;position:sticky;top:80px}
+  .acc-side a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;font-size:14px;color:var(--ink-2);font-weight:600;transition:background .2s,color .2s;margin-bottom:2px}
+  .acc-side a:hover{background:var(--teal-50);color:var(--teal-900)}
+  .acc-side a.on{background:var(--teal-800);color:#fff}
+  .acc-side a.on svg{stroke:#fff}
+  .acc-side hr{border:none;border-top:1px solid var(--line);margin:10px 0}
+
+  .tabs{display:flex;gap:4px;padding:4px;background:var(--sand-2);border-radius:999px;width:fit-content;margin-bottom:24px}
+  .tabs button{padding:9px 18px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--ink-2);transition:all .2s}
+  .tabs button.on{background:#fff;color:var(--teal-900);box-shadow:var(--shadow-sm)}
+
+  /* Booking card */
+  .bk-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:22px;display:grid;grid-template-columns:260px 1fr 280px}
+  .bk-card .img{background:#ddd center/cover;min-height:220px;position:relative}
+  .bk-card .img .when{position:absolute;bottom:14px;left:14px;background:#fff;color:var(--teal-900);padding:8px 14px;border-radius:10px;font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;box-shadow:var(--shadow-sm)}
+  .bk-card .img .when small{display:block;font-family:'Manrope';font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:700}
+  .bk-card .body{padding:22px 26px;display:flex;flex-direction:column;gap:8px;border-right:1px solid var(--line)}
+  .bk-card .body h4{margin:4px 0 0;font-family:'Bebas Neue';font-size:24px;color:var(--teal-900);letter-spacing:.04em;font-weight:400;line-height:1.1}
+  .bk-card .body .meta{font-size:12px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  .bk-card .body .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+  .bk-card .body .ticket-info{display:flex;gap:18px;color:var(--ink-2);font-size:13.5px;padding-top:12px;margin-top:auto;border-top:1px solid var(--line)}
+  .bk-card .body .ticket-info span{display:inline-flex;align-items:center;gap:6px}
+  .bk-card .body .ticket-info b{color:var(--teal-900);font-weight:700}
+
+  /* QR + actions column */
+  .bk-qr-col{padding:20px 22px;background:linear-gradient(180deg,var(--sand),var(--sand-2));display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;text-align:center}
+  .qr{width:130px;height:130px;background:#fff;padding:10px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center}
+  .qr svg{width:100%;height:100%}
+  .bk-qr-col .code{font-family:'Courier New',monospace;font-size:12px;color:var(--ink-2);letter-spacing:.1em;margin-top:4px}
+  .bk-qr-col .acts{display:flex;gap:6px;width:100%;margin-top:10px}
+  .bk-qr-col .acts .btn{flex:1;padding:9px 10px;font-size:11px;letter-spacing:.1em}
+
+  /* Upcoming hero booking */
+  .bk-next{position:relative;background:linear-gradient(90deg,rgba(7,45,56,.9),rgba(10,74,92,.4)),url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1600&q=80') center/cover;border-radius:var(--radius);padding:32px;color:#fff;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;margin-bottom:26px;box-shadow:var(--shadow-md);overflow:hidden}
+  .bk-next::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 300px at 80% 20%,rgba(232,99,74,.25),transparent 60%);pointer-events:none}
+  .bk-next .lbl{font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.8;font-weight:700;margin-bottom:8px;position:relative}
+  .bk-next h3{font-family:'Bebas Neue';font-size:40px;letter-spacing:.02em;margin:0 0 10px;color:#fff;font-weight:400;position:relative}
+  .bk-next p{opacity:.85;margin:0 0 16px;font-size:14px;position:relative}
+  .bk-next .countdown{display:flex;gap:16px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);padding:18px;border-radius:14px;position:relative}
+  .bk-next .countdown .n{font-family:'Bebas Neue';font-size:32px;letter-spacing:.04em;color:#fff}
+  .bk-next .countdown .u{font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-weight:700}
+
+  h3.block{font-family:'Bebas Neue';font-size:24px;letter-spacing:.04em;color:var(--teal-900);margin:18px 0 16px;font-weight:400}
+
+  @media(max-width:960px){
+    .layout{grid-template-columns:1fr}
+    .acc-side{position:static}
+    .bk-card{grid-template-columns:1fr}
+    .bk-card .body{border-right:none;border-bottom:1px solid var(--line)}
+  }
+</style>
+</head>
+<body>
+
+<div class="acc-hero">
+  <div class="wrap">
+    <div class="acc-avatar">MR</div>
+    <div>
+      <h1>MARTA ROSSI</h1>
+      <p>Member since Mar 2025 · <span style="color:var(--coral);font-weight:700">Gold traveller</span></p>
+    </div>
+    <div class="acc-chips">
+      <div class="acc-chip-stat"><div class="num">7</div><div class="lbl">Experiences</div></div>
+      <div class="acc-chip-stat"><div class="num">3</div><div class="lbl">Upcoming</div></div>
+      <div class="acc-chip-stat"><div class="num">€1,284</div><div class="lbl">Lifetime</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap layout">
+  <aside class="acc-side">
+    <a href="#" class="on">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+      Bookings
+    </a>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.7 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      Wishlist <span style="margin-left:auto;font-size:11px;color:var(--mute)">4</span>
+    </a>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      Profile
+    </a>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+      Messages <span style="margin-left:auto;background:var(--coral);color:#fff;font-size:10px;border-radius:999px;padding:2px 7px;font-weight:700">2</span>
+    </a>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
+      Payment methods
+    </a>
+    <hr>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5"/></svg>
+      Settings
+    </a>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Sign out
+    </a>
+  </aside>
+
+  <section>
+    <!-- NEXT UP BANNER -->
+    <div class="bk-next">
+      <div>
+        <div class="lbl">NEXT TRIP · 18 DAYS</div>
+        <h3>Colosseum Underground & Arena Floor</h3>
+        <p>Saturday May 9, 11:00 · Arco di Costantino, Rome · Guide: Marco F.</p>
+        <div style="display:flex;gap:8px;position:relative">
+          <a href="#" class="btn btn-coral">View voucher</a>
+          <a href="#" class="btn btn-ghost-w">Message guide</a>
+        </div>
+      </div>
+      <div class="countdown">
+        <div><div class="n">18</div><div class="u">DAYS</div></div>
+        <div><div class="n">04</div><div class="u">HOURS</div></div>
+        <div><div class="n">22</div><div class="u">MIN</div></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="on">Upcoming (3)</button>
+      <button>Past (4)</button>
+      <button>Cancelled</button>
+      <button>Wishlist</button>
+    </div>
+
+    <!-- Booking cards -->
+    <article class="bk-card">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=900&q=80')">
+        <div class="when">SAT MAY 9<small>11:00 · 2026</small></div>
+      </div>
+      <div class="body">
+        <div class="meta">BK-2026-08471 · CONFIRMED</div>
+        <h4>Colosseum Underground & Arena Floor</h4>
+        <div class="chips"><span class="chip chip-teal">Walking tour</span><span class="chip chip-ok">Free cancel</span></div>
+        <p style="margin:6px 0 0;color:var(--ink-2);font-size:14px">Meet at Arco di Costantino, Via di San Gregorio. Red flag, look for Marco.</p>
+        <div class="ticket-info">
+          <span>👥 <b>2 adults</b></span>
+          <span>🕒 <b>3h</b></span>
+          <span>💶 <b>€138</b></span>
+          <span>🗣 <b>EN</b></span>
+        </div>
+      </div>
+      <div class="bk-qr-col">
+        <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-700);font-weight:700">Your voucher</div>
+        <div class="qr" id="qr1"></div>
+        <div class="code">ST-8471-QR</div>
+        <div class="acts">
+          <a href="#" class="btn btn-teal">Download</a>
+          <a href="#" class="btn btn-ghost">Email</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="bk-card">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=900&q=80')">
+        <div class="when">SUN MAY 10<small>16:30 · 2026</small></div>
+      </div>
+      <div class="body">
+        <div class="meta">BK-2026-08592 · CONFIRMED</div>
+        <h4>Pasta Class with Nonna Adele</h4>
+        <div class="chips"><span class="chip chip-teal">Cooking class</span><span class="chip chip-ok">Food included</span></div>
+        <p style="margin:6px 0 0;color:var(--ink-2);font-size:14px">Via della Scala 44, Trastevere · Adele will meet you at the green door.</p>
+        <div class="ticket-info">
+          <span>👥 <b>2 adults</b></span>
+          <span>🕒 <b>3.5h</b></span>
+          <span>💶 <b>€190</b></span>
+          <span>🗣 <b>EN/IT</b></span>
+        </div>
+      </div>
+      <div class="bk-qr-col">
+        <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-700);font-weight:700">Your voucher</div>
+        <div class="qr" id="qr2"></div>
+        <div class="code">ST-8592-QR</div>
+        <div class="acts">
+          <a href="#" class="btn btn-teal">Download</a>
+          <a href="#" class="btn btn-ghost">Email</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="bk-card">
+      <div class="img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Gardens%20and%20fountains%20in%20Villa%20d%27Este%20(Tivoli)%20(8).jpg?width=900')">
+        <div class="when">TUE MAY 12<small>09:00 · 2026</small></div>
+      </div>
+      <div class="body">
+        <div class="meta">BK-2026-08612 · PENDING GUIDE CONFIRM</div>
+        <h4>Tivoli Day Trip — Villa d'Este & Hadrian's</h4>
+        <div class="chips"><span class="chip chip-coral">Day trip</span><span class="chip chip-ink">Waiting 1 slot</span></div>
+        <p style="margin:6px 0 0;color:var(--ink-2);font-size:14px">Pickup from Via del Corso 112, 08:45. Bring comfortable shoes and a hat.</p>
+        <div class="ticket-info">
+          <span>👥 <b>2 adults</b></span>
+          <span>🕒 <b>8h</b></span>
+          <span>💶 <b>€258</b></span>
+          <span>🗣 <b>EN</b></span>
+        </div>
+      </div>
+      <div class="bk-qr-col">
+        <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--warn);font-weight:700">Pending</div>
+        <div class="qr" id="qr3" style="opacity:.4"></div>
+        <div class="code">ST-8612-PEND</div>
+        <div class="acts">
+          <a href="#" class="btn btn-ghost">Details</a>
+          <a href="#" class="btn btn-ghost" style="color:var(--coral);border-color:var(--coral-50)">Cancel</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Recommended -->
+    <h3 class="block" style="margin-top:40px">Because you liked walking tours</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+      <a href="Experience.html" class="card" style="overflow:hidden;display:flex;flex-direction:column">
+        <div style="aspect-ratio:16/10;background:#ddd center/cover;background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Galleria%20delle%20carte%20geografiche%20(Vatican%20Museums)%20September%202015-5.jpg?width=900')"></div>
+        <div style="padding:16px 18px">
+          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;color:var(--teal-900)">Vatican Early Access</div>
+          <div style="font-size:12px;color:var(--mute);margin:4px 0 10px">3.5h · Max 10</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span style="color:var(--coral);font-weight:700">★ 4.94</span><span style="color:var(--teal-900);font-weight:700">from €89</span></div>
+        </div>
+      </a>
+      <a href="Experience.html" class="card" style="overflow:hidden;display:flex;flex-direction:column">
+        <div style="aspect-ratio:16/10;background:#ddd center/cover;background-image:url('https://images.unsplash.com/photo-1525874684015-58379d421a52?w=700&q=80')"></div>
+        <div style="padding:16px 18px">
+          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;color:var(--teal-900)">Aventino at Sunrise</div>
+          <div style="font-size:12px;color:var(--mute);margin:4px 0 10px">2h · Max 6</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span style="color:var(--coral);font-weight:700">★ 4.99</span><span style="color:var(--teal-900);font-weight:700">from €45</span></div>
+        </div>
+      </a>
+      <a href="Experience.html" class="card" style="overflow:hidden;display:flex;flex-direction:column">
+        <div style="aspect-ratio:16/10;background:#ddd center/cover;background-image:url('https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=700&q=80')"></div>
+        <div style="padding:16px 18px">
+          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;color:var(--teal-900)">Trastevere Food Tour</div>
+          <div style="font-size:12px;color:var(--mute);margin:4px 0 10px">3h · Max 8</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span style="color:var(--coral);font-weight:700">★ 4.98</span><span style="color:var(--teal-900);font-weight:700">from €78</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<script src="i18n.js"></script>
+<script src="components.js"></script>
+<script>
+  window.ST_TWEAKS = /*EDITMODE-BEGIN*/{"teal":"#0a4a5c","coral":"#e8634a","hero_layout":"A"}/*EDITMODE-END*/;
+  STComponents.mountNav('exp', false);
+  STComponents.mountFooter();
+  STComponents.mountTweaks({});
+
+  // simple generative QR (visual placeholder, not scannable)
+  function drawQR(target, seed){
+    const n = 21;
+    const cell = 5;
+    let s = '<svg viewBox="0 0 '+n*cell+' '+n*cell+'" xmlns="http://www.w3.org/2000/svg">';
+    s += '<rect width="100%" height="100%" fill="#fff"/>';
+    let h = seed;
+    function rand(){ h = (h*9301 + 49297) % 233280; return h/233280; }
+    for(let y=0;y<n;y++){
+      for(let x=0;x<n;x++){
+        const corner = (x<7 && y<7) || (x>n-8 && y<7) || (x<7 && y>n-8);
+        const inner = ((x<7&&y<7&&x>0&&x<6&&y>0&&y<6&&!(x>1&&x<5&&y>1&&y<5)));
+        let fill = false;
+        if(x<7&&y<7){ fill = !(x>0&&x<6&&y>0&&y<6) || (x>1&&x<5&&y>1&&y<5); }
+        else if(x>n-8&&y<7){ const xx=x-(n-7); fill = !(xx>0&&xx<6&&y>0&&y<6) || (xx>1&&xx<5&&y>1&&y<5); }
+        else if(x<7&&y>n-8){ const yy=y-(n-7); fill = !(x>0&&x<6&&yy>0&&yy<6) || (x>1&&x<5&&yy>1&&yy<5); }
+        else { fill = rand() > .55; }
+        if(fill) s += `<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#072d38"/>`;
+      }
+    }
+    s += '</svg>';
+    target.innerHTML = s;
+  }
+  drawQR(document.getElementById('qr1'), 8471);
+  drawQR(document.getElementById('qr2'), 8592);
+  drawQR(document.getElementById('qr3'), 8612);
+
+  document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+  }));
+</script>
+</body>
+</html>

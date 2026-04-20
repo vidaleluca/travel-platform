@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Checkout — SocialTravels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css"/>
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  body{background:var(--sand)}
+
+  /* Breadcrumb/checkout header strip */
+  .co-topstrip{
+    background:#fff;border-bottom:1px solid var(--line);
+    padding:18px 0;
+  }
+  .co-topstrip .wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .co-back{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    color:var(--ink-2);transition:color .2s;
+  }
+  .co-back:hover{color:var(--coral)}
+  .co-trust{
+    margin-left:auto;display:flex;gap:22px;align-items:center;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);font-weight:700;
+  }
+  .co-trust span{display:flex;align-items:center;gap:6px}
+  .co-trust svg{color:var(--teal-700)}
+
+  /* MAIN LAYOUT */
+  .co-layout{
+    max-width:1280px;margin:0 auto;padding:56px 28px 80px;
+    display:grid;grid-template-columns:1.4fr 1fr;gap:56px;align-items:start;
+  }
+  .co-head{margin-bottom:40px}
+  .co-head .kicker{margin-bottom:18px}
+  .co-head h1{
+    font-family:'Bebas Neue',sans-serif;font-weight:400;
+    font-size:clamp(48px,6vw,88px);line-height:.92;margin:0;color:var(--teal-900);
+  }
+  .co-head h1 .ital{font-size:.6em;display:block;margin-top:6px}
+
+  /* STEPS */
+  .co-steps{
+    display:flex;gap:0;margin-bottom:38px;
+    border:1px solid var(--line);border-radius:999px;padding:4px;background:#fff;
+    max-width:560px;
+  }
+  .co-step{
+    flex:1;padding:10px 14px;border-radius:999px;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+    color:var(--mute);text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;
+    transition:all .2s;
+  }
+  .co-step .n{
+    width:20px;height:20px;border-radius:50%;background:var(--sand-2);color:var(--ink-2);
+    display:grid;place-items:center;font-size:10px;
+  }
+  .co-step.done{color:var(--teal-800)}
+  .co-step.done .n{background:var(--teal-50);color:var(--teal-800)}
+  .co-step.done .n::before{content:'✓'}
+  .co-step.done .n-txt{display:none}
+  .co-step.active{background:var(--teal-900);color:#fff}
+  .co-step.active .n{background:#fff;color:var(--teal-900)}
+
+  /* CARD SECTIONS */
+  .co-section{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px 30px;margin-bottom:20px;box-shadow:var(--shadow-sm);
+  }
+  .co-section h3{
+    font-family:'Bebas Neue',sans-serif;font-weight:400;letter-spacing:.06em;
+    font-size:22px;color:var(--teal-900);margin:0 0 4px;
+  }
+  .co-section .sub{font-size:13px;color:var(--mute);margin:0 0 22px}
+  .co-section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
+  .co-section-head > div > h3{margin-bottom:2px}
+  .co-section-num{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+    font-size:48px;color:var(--coral);opacity:.25;line-height:1;
+  }
+
+  /* FORM */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-grid .full{grid-column:1/-1}
+  .field-group{position:relative}
+  .field-group label{
+    display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    font-weight:700;color:var(--ink-2);margin-bottom:6px;
+  }
+  .field-group input, .field-group select{
+    width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;
+    font:inherit;font-size:14px;color:var(--ink);background:#fff;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .field-group input:focus, .field-group select:focus{
+    outline:none;border-color:var(--teal-700);box-shadow:0 0 0 3px rgba(14,100,120,.12);
+  }
+  .field-group input::placeholder{color:var(--mute)}
+
+  /* TRAVELLERS */
+  .traveller-card{
+    border:1px dashed var(--line);border-radius:12px;padding:18px;margin-bottom:14px;
+    position:relative;background:var(--sand);
+  }
+  .traveller-card .t-badge{
+    position:absolute;top:-10px;left:18px;background:var(--teal-800);color:#fff;
+    padding:3px 10px;border-radius:999px;font-size:10px;letter-spacing:.2em;font-weight:700;
+  }
+
+  /* PAYMENT */
+  .pay-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+  .pay-tab{
+    padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+    display:flex;align-items:center;gap:10px;transition:all .2s;background:#fff;cursor:pointer;
+    font-size:12.5px;font-weight:600;min-width:0;overflow:hidden;
+  }
+  .pay-tab:hover{border-color:var(--teal-700)}
+  .pay-tab.on{border-color:var(--teal-800);background:var(--teal-50);color:var(--teal-900);box-shadow:0 0 0 2px var(--teal-800) inset}
+  .pay-tab > svg{color:var(--teal-800);flex-shrink:0}
+  .pay-tab .label{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pay-tab .chips{display:flex;gap:3px;flex-shrink:0}
+  .pay-tab .cc{width:20px;height:13px;border-radius:2.5px}
+  .pay-tab .cc.visa{background:linear-gradient(135deg,#1a1f71,#2a3ea1)}
+  .pay-tab .cc.mc{background:radial-gradient(circle at 35% 50%,#eb001b 40%,transparent 41%),radial-gradient(circle at 65% 50%,#f79e1b 40%,transparent 41%),#fff}
+  .pay-tab .cc.amex{background:#2e77bb}
+  @media(max-width:720px){
+    .pay-tabs{grid-template-columns:1fr 1fr}
+  }
+
+  /* Stripe Payment Element placeholder wrapper */
+  .stripe-wrap{
+    padding:4px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    min-height:220px;
+  }
+  .stripe-wrap.loading{
+    display:grid;place-items:center;color:var(--mute);font-size:13px;
+    background:linear-gradient(90deg,#fff 0%,var(--sand) 50%,#fff 100%);
+    background-size:200% 100%;animation:shim 1.6s infinite;
+  }
+  @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  /* Stripe Element overrides — pushed via appearance */
+  .stripe-footer{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:14px;font-size:12px;color:var(--mute);
+  }
+  .stripe-footer a{color:var(--teal-700);font-weight:700}
+  .stripe-mark{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.08em;font-weight:700;color:var(--ink-2)}
+
+  /* Billing toggle */
+  .checkbox-row{
+    display:flex;align-items:flex-start;gap:12px;padding:14px 0;
+    font-size:13.5px;color:var(--ink-2);
+  }
+  .checkbox-row input{
+    width:18px;height:18px;accent-color:var(--teal-800);margin-top:1px;flex-shrink:0;
+  }
+  .checkbox-row a{color:var(--teal-700);font-weight:700;border-bottom:1px solid var(--teal-700)}
+
+  /* SUMMARY */
+  .co-summary{
+    position:sticky;top:90px;background:#fff;border:1px solid var(--line);
+    border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md);
+  }
+  .summary-hero{
+    position:relative;height:220px;overflow:hidden;
+  }
+  .summary-hero img{width:100%;height:100%;object-fit:cover}
+  .summary-hero .overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(7,45,56,.85) 0%,rgba(7,45,56,.1) 55%,transparent 100%);
+    padding:22px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;
+  }
+  .summary-hero .overlay .cat{
+    font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+    color:rgba(255,255,255,.8);margin-bottom:6px;
+  }
+  .summary-hero .overlay h4{
+    font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;
+    margin:0;line-height:1;
+  }
+  .summary-hero .overlay .r{
+    font-size:12px;margin-top:6px;display:flex;align-items:center;gap:6px;
+    color:rgba(255,255,255,.88);
+  }
+  .summary-hero .overlay .r .star{color:var(--coral)}
+
+  .summary-body{padding:22px 24px 24px}
+  .summary-meta{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;
+    padding-bottom:18px;border-bottom:1px dashed var(--line);
+  }
+  .summary-meta > div{display:flex;flex-direction:column;gap:3px}
+  .summary-meta .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:700}
+  .summary-meta .v{font-size:14px;color:var(--ink);font-weight:600}
+  .summary-meta .v .edit{margin-left:6px;color:var(--teal-700);font-size:11px;letter-spacing:.12em;font-weight:700;border-bottom:1px solid var(--teal-700)}
+
+  .summary-rows{display:flex;flex-direction:column;gap:10px}
+  .srow{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-2)}
+  .srow b{color:var(--ink);font-weight:700}
+  .srow.discount{color:var(--ok)}
+  .srow.total{
+    border-top:1px solid var(--line);padding-top:14px;margin-top:4px;
+    font-size:15px;color:var(--teal-900);
+  }
+  .srow.total b{
+    font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.04em;color:var(--teal-900);
+  }
+
+  .promo-row{
+    margin-top:16px;display:flex;gap:8px;
+  }
+  .promo-row input{
+    flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:999px;
+    font:inherit;font-size:13px;color:var(--ink);background:var(--sand);outline:none;
+  }
+  .promo-row input:focus{border-color:var(--teal-700);background:#fff}
+  .promo-row button{
+    padding:11px 18px;border-radius:999px;background:var(--teal-900);color:#fff;
+    font-size:11px;letter-spacing:.16em;font-weight:700;
+  }
+
+  .pay-btn{
+    width:100%;margin-top:20px;padding:18px;border-radius:999px;
+    background:var(--coral);color:#fff;
+    font-size:14px;letter-spacing:.12em;font-weight:700;text-transform:uppercase;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:background .2s,transform .1s;
+  }
+  .pay-btn:hover{background:var(--coral-dark)}
+  .pay-btn:active{transform:translateY(1px)}
+  .pay-btn:disabled{background:var(--mute);cursor:not-allowed}
+
+  .fineprint{
+    font-size:11.5px;color:var(--mute);text-align:center;margin-top:14px;line-height:1.5;
+  }
+  .fineprint .lock{display:inline-flex;align-items:center;gap:5px;color:var(--teal-700);font-weight:700;margin-right:6px}
+
+  /* Reassurance bar below */
+  .reass{
+    margin-top:28px;padding:22px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+  }
+  .reass > div{display:flex;gap:12px;align-items:flex-start}
+  .reass .ic{
+    width:36px;height:36px;border-radius:50%;background:var(--teal-50);color:var(--teal-800);
+    display:grid;place-items:center;flex-shrink:0;
+  }
+  .reass h5{margin:0 0 3px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-900);font-weight:700}
+  .reass p{margin:0;font-size:12px;color:var(--ink-2);line-height:1.5}
+
+  /* Success overlay */
+  .success-overlay{
+    position:fixed;inset:0;background:rgba(7,45,56,.96);color:#fff;z-index:1000;
+    display:none;place-items:center;padding:20px;
+  }
+  .success-overlay.on{display:grid}
+  .success-overlay .box{max-width:440px;text-align:center}
+  .success-overlay .check{
+    width:80px;height:80px;border-radius:50%;background:var(--coral);margin:0 auto 22px;
+    display:grid;place-items:center;animation:pop .4s ease-out;
+  }
+  @keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+  .success-overlay h2{
+    font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:54px;letter-spacing:.04em;
+    margin:0 0 8px;line-height:1;
+  }
+  .success-overlay .sub{color:rgba(255,255,255,.7);margin:0 0 24px;font-size:14px}
+  .success-overlay .order{
+    display:inline-flex;gap:10px;padding:10px 18px;background:rgba(255,255,255,.08);
+    border-radius:999px;font-size:13px;font-weight:700;margin-bottom:28px;
+    border:1px solid rgba(255,255,255,.2);
+  }
+  .success-overlay .order b{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.14em}
+
+  @media(max-width:960px){
+    .co-layout{grid-template-columns:1fr;padding:32px 20px 60px}
+    .co-summary{position:static}
+    .reass{grid-template-columns:1fr}
+    .summary-hero{height:180px}
+  }
+  @media(max-width:560px){
+    .form-grid{grid-template-columns:1fr}
+    .co-section{padding:22px}
+    .co-steps{font-size:10px}
+    .co-step .n-txt{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP STRIP -->
+<div class="co-topstrip">
+  <div class="wrap">
+    <a class="co-back" href="Experience.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+      Back to experience
+    </a>
+    <div class="co-trust">
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        SECURE CHECKOUT
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5z"/><path d="m9 12 2 2 4-4"/></svg>
+        PCI-DSS · SSL
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        FREE CANCEL · 24H
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="co-layout">
+
+  <!-- LEFT COLUMN -->
+  <section>
+    <div class="co-head">
+      <div class="kicker">Step 3 of 3 · Almost there</div>
+      <h1>Confirm <span class="ital">&amp; pay.</span></h1>
+    </div>
+
+    <div class="co-steps">
+      <div class="co-step done"><span class="n"><span class="n-txt">1</span></span> Experience</div>
+      <div class="co-step done"><span class="n"><span class="n-txt">2</span></span> Travellers</div>
+      <div class="co-step active"><span class="n"><span class="n-txt">3</span></span> Payment</div>
+    </div>
+
+    <!-- 1. CONTACT -->
+    <div class="co-section">
+      <div class="co-section-head">
+        <div>
+          <h3>Contact details</h3>
+          <p class="sub">Your voucher and confirmation will be sent here.</p>
+        </div>
+        <div class="co-section-num">01</div>
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label>First name</label>
+          <input type="text" value="Elena"/>
+        </div>
+        <div class="field-group">
+          <label>Last name</label>
+          <input type="text" value="Moretti"/>
+        </div>
+        <div class="field-group full">
+          <label>Email</label>
+          <input type="email" value="elena.moretti@email.com"/>
+        </div>
+        <div class="field-group">
+          <label>Country code</label>
+          <select>
+            <option>🇮🇹 +39 Italy</option>
+            <option>🇬🇧 +44 UK</option>
+            <option>🇺🇸 +1 US</option>
+            <option>🇫🇷 +33 France</option>
+            <option>🇩🇪 +49 Germany</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Mobile</label>
+          <input type="tel" placeholder="347 123 4567"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. TRAVELLERS -->
+    <div class="co-section">
+      <div class="co-section-head">
+        <div>
+          <h3>Travellers</h3>
+          <p class="sub">For the entry ticket at the Colosseum we need full name of each guest.</p>
+        </div>
+        <div class="co-section-num">02</div>
+      </div>
+
+      <div class="traveller-card">
+        <span class="t-badge">ADULT · 1</span>
+        <div class="form-grid" style="margin-top:6px">
+          <div class="field-group">
+            <label>Full name (as on ID)</label>
+            <input type="text" value="Elena Moretti"/>
+          </div>
+          <div class="field-group">
+            <label>Date of birth</label>
+            <input type="text" placeholder="DD / MM / YYYY" value="14 / 03 / 1991"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="traveller-card">
+        <span class="t-badge">ADULT · 2</span>
+        <div class="form-grid" style="margin-top:6px">
+          <div class="field-group">
+            <label>Full name (as on ID)</label>
+            <input type="text" placeholder="Mario Rossi"/>
+          </div>
+          <div class="field-group">
+            <label>Date of birth</label>
+            <input type="text" placeholder="DD / MM / YYYY"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. PAYMENT -->
+    <div class="co-section">
+      <div class="co-section-head">
+        <div>
+          <h3>Payment</h3>
+          <p class="sub">Powered by Stripe. We never store your card details.</p>
+        </div>
+        <div class="co-section-num">03</div>
+      </div>
+
+      <!-- Payment method tabs -->
+      <div class="pay-tabs">
+        <button class="pay-tab on" data-method="card">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h3"/></svg>
+          <span class="label">Card</span>
+          <span class="chips">
+            <span class="cc visa"></span>
+            <span class="cc mc"></span>
+          </span>
+        </button>
+        <button class="pay-tab" data-method="apple">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.03-3.1 2.53-4.58 2.64-4.65-1.44-2.11-3.68-2.4-4.48-2.43-1.91-.19-3.72 1.12-4.69 1.12-.97 0-2.46-1.09-4.04-1.06-2.08.03-4 1.21-5.07 3.07-2.16 3.75-.55 9.3 1.55 12.34 1.03 1.49 2.26 3.16 3.88 3.1 1.56-.06 2.15-1 4.03-1 1.88 0 2.42 1 4.07.97 1.68-.03 2.74-1.52 3.77-3.01 1.19-1.73 1.68-3.4 1.71-3.49-.04-.02-3.28-1.26-3.37-4.96z"/><path d="M13.93 3.46c.85-1.03 1.42-2.46 1.27-3.89-1.22.05-2.71.82-3.59 1.85-.79.91-1.48 2.37-1.29 3.77 1.37.1 2.76-.69 3.61-1.73z"/></svg>
+          <span class="label">Apple Pay</span>
+        </button>
+        <button class="pay-tab" data-method="google">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11v2.5h5.7c-.2 1.5-1.8 4.4-5.7 4.4-3.4 0-6.2-2.8-6.2-6.3s2.8-6.3 6.2-6.3c1.9 0 3.2.8 4 1.5l2.7-2.6C17 2.7 14.7 1.7 12 1.7 6.5 1.7 2 6.2 2 11.7s4.5 10 10 10c5.8 0 9.6-4.1 9.6-9.8 0-.7-.1-1.2-.2-1.8H12z"/></svg>
+          <span class="label">Google Pay</span>
+        </button>
+        <button class="pay-tab" data-method="klarna">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M7 12h4M7 15h6"/></svg>
+          <span class="label">Klarna</span>
+        </button>
+      </div>
+
+      <!-- STRIPE PAYMENT ELEMENT MOUNTS HERE -->
+      <div class="stripe-wrap loading" id="stripe-wrap">
+        <div id="payment-element">Loading secure payment field…</div>
+      </div>
+
+      <div class="stripe-footer">
+        <div class="stripe-mark">
+          <svg width="34" height="14" viewBox="0 0 60 25" fill="#635bff"><path d="M59.5 14.1c0-4.3-2.1-7.7-6-7.7s-6.3 3.4-6.3 7.7c0 5.1 2.9 7.7 6.9 7.7 2 0 3.5-.4 4.6-1.1v-3.4c-1.1.6-2.4.9-4 .9-1.6 0-3-.6-3.2-2.5h8zm-8-1.6c0-1.8 1.1-2.6 2.1-2.6s2 .8 2 2.6zm-10.3-6.1c-1.6 0-2.6.8-3.2 1.3l-.2-1H34.5v19.6l4.2-.9v-4.7c.6.4 1.5 1.1 3 1.1 3 0 5.8-2.4 5.8-7.8 0-4.9-2.8-7.6-5.9-7.6zm-1 11.7c-1 0-1.6-.4-2-.8l0-6.3c.4-.5 1-.8 2-.8 1.6 0 2.6 1.7 2.6 3.9 0 2.3-1.1 4-2.6 4zM26.6 5.4l4.2-.9v-3.4l-4.2.9zM26.6 6.7h4.2v14.7h-4.2zm-4.5 1.2-.3-1.2h-3.6v14.7h4.2V11.6c1-1.3 2.7-1 3.2-.9V6.7c-.6-.2-2.5-.5-3.5 1.2zm-8.3-4.8-4.1.9v13.7c0 2.5 1.9 4.4 4.4 4.4 1.4 0 2.4-.3 3-.6v-3.4c-.5.2-3.2 1-3.2-1.5V10.3h3.2V6.7H14v-4zm-11.6 7c0-.7.5-.9 1.4-.9 1.2 0 2.7.4 3.9 1V5.7c-1.3-.5-2.6-.7-3.9-.7-3.2 0-5.4 1.7-5.4 4.5 0 4.4 6.1 3.7 6.1 5.6 0 .8-.7 1-1.7 1-1.3 0-3-.5-4.3-1.2v4c1.4.6 2.9.9 4.3.9 3.3 0 5.6-1.4 5.6-4.6 0-4.8-6.2-4-6.2-5.9z"/></svg>
+          SECURED BY
+        </div>
+        <div>
+          <a href="#" onclick="event.preventDefault()">What's this charge?</a>
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="same-billing" checked/>
+        <label for="same-billing">Billing address is the same as contact details.</label>
+      </div>
+    </div>
+
+    <!-- REASSURANCE -->
+    <div class="reass">
+      <div>
+        <div class="ic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <div>
+          <h5>Free cancel · 24h</h5>
+          <p>Cancel up to 24 hours before the start time for a full refund.</p>
+        </div>
+      </div>
+      <div>
+        <div class="ic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+          <h5>24/7 Support</h5>
+          <p>Our Rome team is reachable by WhatsApp, email and phone — always.</p>
+        </div>
+      </div>
+      <div>
+        <div class="ic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h5>PCI-DSS secure</h5>
+          <p>Card data is tokenized by Stripe. We never touch or store it.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- RIGHT: SUMMARY -->
+  <aside class="co-summary">
+    <div class="summary-hero">
+      <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80" alt="Colosseum"/>
+      <div class="overlay">
+        <div class="cat">Walking tour · Rome</div>
+        <h4>COLOSSEUM · FORUM · PALATINE</h4>
+        <div class="r"><span class="star">★</span> 4.96 · 2,148 reviews · 3h</div>
+      </div>
+    </div>
+
+    <div class="summary-body">
+      <div class="summary-meta">
+        <div>
+          <span class="k">Date</span>
+          <span class="v">Sat · May 9 <a class="edit" href="#" onclick="event.preventDefault()">EDIT</a></span>
+        </div>
+        <div>
+          <span class="k">Time slot</span>
+          <span class="v">11:00 AM</span>
+        </div>
+        <div>
+          <span class="k">Travellers</span>
+          <span class="v">2 adults</span>
+        </div>
+        <div>
+          <span class="k">Guide</span>
+          <span class="v">Giulia R. · EN</span>
+        </div>
+      </div>
+
+      <div class="summary-rows">
+        <div class="srow"><span>2 adults × €74</span><b>€148.00</b></div>
+        <div class="srow"><span>Booking fee</span><b>€0.00</b></div>
+        <div class="srow discount"><span>First-time guest · WELCOME10</span><b>−€10.00</b></div>
+        <div class="srow"><span>VAT · included</span><span style="color:var(--mute)">€24.22</span></div>
+        <div class="srow total"><span>Total · EUR</span><b>€138.00</b></div>
+      </div>
+
+      <div class="promo-row">
+        <input type="text" placeholder="Promo code" value="WELCOME10"/>
+        <button onclick="this.textContent='APPLIED ✓';this.style.background='var(--ok)'">APPLY</button>
+      </div>
+
+      <button class="pay-btn" id="pay-btn" onclick="completePayment(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Pay €138.00
+      </button>
+
+      <div class="fineprint">
+        <span class="lock">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          SSL
+        </span>
+        Your card will be charged when you tap Pay. By confirming, you agree to our <a href="#" style="color:var(--teal-700);border-bottom:1px solid var(--teal-700)">Terms</a> &amp; <a href="#" style="color:var(--teal-700);border-bottom:1px solid var(--teal-700)">Cancellation policy</a>.
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success">
+  <div class="box">
+    <div class="check">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+    </div>
+    <h2>Andiamo!</h2>
+    <p class="sub">Your booking is confirmed. We've sent the voucher to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1c4cdc4cfc08fccced3c4d5d5c8e1c4ccc0c8cd8fc2cecc">[email&#160;protected]</a>.</p>
+    <div class="order">Order <b>#ST-2026-048371</b></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-coral" href="Account.html">View my bookings</a>
+      <a class="btn btn-ghost-w" href="index.html" style="border-color:rgba(255,255,255,.3)">Back home</a>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script src="components.js"></script>
+<script src="i18n.js" defer></script>
+
+<script>
+  window.ST_TWEAKS = /*EDITMODE-BEGIN*/{
+    "teal": "#0a4a5c",
+    "coral": "#e8634a",
+    "hero_layout": "B"
+  }/*EDITMODE-END*/;
+  STComponents.mountNav('exp', false);
+  STComponents.mountFooter();
+  STComponents.mountTweaks({});
+</script>
+
+<script>
+// Payment method tabs
+document.querySelectorAll('.pay-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.pay-tab').forEach(t=>t.classList.remove('on'));
+    tab.classList.add('on');
+  });
+});
+
+// Stripe Payment Element — using a demo publishable key.
+// In production you'd create a PaymentIntent server-side and pass its clientSecret.
+// For this prototype we mount <Elements> via the deferred intent pattern (Stripe calls
+// it "deferred intent creation") which requires no server roundtrip to display the UI.
+(async function mountStripe(){
+  const wrap = document.getElementById('stripe-wrap');
+  const mount = document.getElementById('payment-element');
+  try{
+    // publishable test key — public, safe to expose (Stripe design guideline)
+    const stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+
+    const appearance = {
+      theme: 'flat',
+      variables: {
+        colorPrimary: '#0a4a5c',
+        colorBackground: '#ffffff',
+        colorText: '#15232a',
+        colorTextSecondary: '#7a8a92',
+        colorDanger: '#e8634a',
+        fontFamily: 'Manrope, system-ui, sans-serif',
+        fontSizeBase: '14px',
+        borderRadius: '10px',
+        spacingUnit: '4px',
+      },
+      rules: {
+        '.Input': {
+          border: '1px solid rgba(12,50,62,.12)',
+          padding: '13px 14px',
+          boxShadow: 'none',
+          transition: 'border-color .2s, box-shadow .2s',
+        },
+        '.Input:focus': {
+          border: '1px solid #0e6478',
+          boxShadow: '0 0 0 3px rgba(14,100,120,.12)',
+        },
+        '.Label': {
+          fontSize: '10.5px',
+          fontWeight: '700',
+          letterSpacing: '.18em',
+          textTransform: 'uppercase',
+          color: '#3a4a53',
+          marginBottom: '6px',
+        },
+        '.Tab': {
+          border: '1px solid rgba(12,50,62,.12)',
+          padding: '14px',
+          borderRadius: '10px',
+        },
+        '.Tab--selected': {
+          borderColor: '#0a4a5c',
+          backgroundColor: '#e6f1f3',
+        },
+        '.Error': {
+          color: '#e8634a',
+          fontSize: '12px',
+          marginTop: '6px',
+        },
+      },
+    };
+
+    const elements = stripe.elements({
+      mode: 'payment',
+      amount: 13800,       // €138.00 in cents
+      currency: 'eur',
+      appearance,
+      paymentMethodCreation: 'manual',
+    });
+
+    const paymentElement = elements.create('payment', {
+      layout: { type: 'accordion', defaultCollapsed: false, radios: false, spacedAccordionItems: true },
+      fields: {
+        billingDetails: {
+          name: 'auto',
+          email: 'never',
+          phone: 'never',
+          address: {
+            country: 'auto',
+            postalCode: 'auto',
+            line1: 'never',
+            line2: 'never',
+            city: 'never',
+            state: 'never',
+          }
+        }
+      },
+      defaultValues: {
+        billingDetails: {
+          name: 'Elena Moretti',
+          address: { country: 'IT', postal_code: '00184' },
+        }
+      },
+      wallets: { applePay: 'never', googlePay: 'never' }, // we show our own wallet tabs above
+    });
+
+    paymentElement.on('ready', ()=>{
+      wrap.classList.remove('loading');
+      // remove placeholder text node if any
+      mount.childNodes.forEach(n=>{ if(n.nodeType===3) n.remove(); });
+    });
+
+    paymentElement.mount('#payment-element');
+
+    // stash for submit later
+    window.__stripe = { stripe, elements, paymentElement };
+  }catch(err){
+    console.warn('Stripe failed, rendering fallback.', err);
+    wrap.classList.remove('loading');
+    mount.innerHTML = renderFallback();
+  }
+})();
+
+function renderFallback(){
+  return `
+    <div style="padding:22px">
+      <div class="field-group" style="margin-bottom:14px">
+        <label>Card number</label>
+        <div style="position:relative">
+          <input type="text" placeholder="1234 1234 1234 1234" style="width:100%;padding:13px 14px;padding-right:90px;border:1px solid rgba(12,50,62,.12);border-radius:10px;font-size:14px;font-family:inherit"/>
+          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:4px">
+            <span style="width:26px;height:18px;border-radius:3px;background:linear-gradient(135deg,#1a1f71,#2a3ea1)"></span>
+            <span style="width:26px;height:18px;border-radius:3px;background:radial-gradient(circle at 35% 50%,#eb001b 40%,transparent 41%),radial-gradient(circle at 65% 50%,#f79e1b 40%,transparent 41%),#fff"></span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="field-group">
+          <label>Expiry</label>
+          <input type="text" placeholder="MM / YY" style="width:100%;padding:13px 14px;border:1px solid rgba(12,50,62,.12);border-radius:10px;font-size:14px;font-family:inherit"/>
+        </div>
+        <div class="field-group">
+          <label>CVC</label>
+          <input type="text" placeholder="123" style="width:100%;padding:13px 14px;border:1px solid rgba(12,50,62,.12);border-radius:10px;font-size:14px;font-family:inherit"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Name on card</label>
+        <input type="text" placeholder="ELENA MORETTI" style="width:100%;padding:13px 14px;border:1px solid rgba(12,50,62,.12);border-radius:10px;font-size:14px;font-family:inherit"/>
+      </div>
+    </div>
+  `;
+}
+
+// Pay button
+function completePayment(btn){
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.2-8.55"/></svg> Processing securely…`;
+  setTimeout(()=>{
+    document.getElementById('success').classList.add('on');
+  }, 1400);
+}
+window.completePayment = completePayment;
+
+// spinner keyframes
+const sty = document.createElement('style');
+sty.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(sty);
+</script>
+</body>
+</html>

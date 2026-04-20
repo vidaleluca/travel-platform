@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Walking Tours — SocialTravels</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .cat-hero{
+    position:relative;height:460px;color:#fff;overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(7,45,56,.45) 0%, rgba(7,45,56,.7) 100%),
+      url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=2200&q=80') center/cover;
+    display:flex;align-items:flex-end;
+  }
+  .cat-hero .inner{padding:0 0 50px;width:100%}
+  .breadcrumb{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:16px;font-weight:600}
+  .breadcrumb a{color:inherit}
+  .breadcrumb span{color:rgba(255,255,255,.9)}
+  .cat-hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(62px,9vw,128px);letter-spacing:.02em;line-height:.95;margin:0 0 12px;color:#fff;font-weight:400}
+  .cat-hero p{max-width:560px;font-size:16px;opacity:.88;margin:0}
+
+  .layout{display:grid;grid-template-columns:280px 1fr;gap:48px;padding:60px 0}
+  aside.filters{position:sticky;top:90px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm)}
+  .filters h5{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-700);margin:0 0 12px;font-weight:700}
+  .filt-group{padding:14px 0;border-bottom:1px solid var(--line)}
+  .filt-group:last-child{border-bottom:none}
+  .filt-group label{display:flex;align-items:center;gap:10px;font-size:14px;padding:6px 0;color:var(--ink-2);cursor:pointer}
+  .filt-group input[type=checkbox]{accent-color:var(--teal-800);width:16px;height:16px}
+  .filt-group label .count{margin-left:auto;color:var(--mute);font-size:12px}
+  .range{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .range input[type=range]{accent-color:var(--teal-800);width:100%}
+  .range .labels{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2)}
+  .date-pills{display:flex;gap:6px;flex-wrap:wrap}
+  .date-pills button{padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:11.5px;font-weight:600;background:#fff;color:var(--ink-2);transition:all .2s}
+  .date-pills button.on{background:var(--teal-800);color:#fff;border-color:var(--teal-800)}
+
+  .results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .results-bar .n{font-size:14px;color:var(--ink-2)}
+  .results-bar .n b{color:var(--teal-900);font-weight:700}
+  .sort{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2)}
+  .sort select{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+
+  .pkg-list{display:flex;flex-direction:column;gap:18px}
+  .pkg-row{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:300px 1fr 220px;gap:0;transition:transform .3s,box-shadow .3s;cursor:pointer}
+  .pkg-row:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .pkg-row .img{position:relative;background:#ddd center/cover;min-height:240px}
+  .pkg-row .img .tag{position:absolute;top:12px;left:12px}
+  .pkg-row .body{padding:24px 28px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--line)}
+  .pkg-row h3{font-family:'Bebas Neue',sans-serif;font-size:26px;font-weight:400;letter-spacing:.04em;margin:4px 0 0;color:var(--teal-900);line-height:1.05}
+  .pkg-row .byline{font-size:12px;color:var(--mute);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .pkg-row .desc{font-size:14px;color:var(--ink-2);line-height:1.5;margin:0}
+  .pkg-row .meta{display:flex;gap:16px;font-size:12px;color:var(--ink-2);margin-top:auto;padding-top:10px}
+  .pkg-row .meta span{display:inline-flex;align-items:center;gap:6px}
+  .pkg-row .rating{display:flex;align-items:center;gap:6px;color:var(--ink-2);font-size:13px;font-weight:600}
+  .pkg-row .rating .star{color:var(--coral)}
+  .pkg-row .aside{padding:24px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,#fff,var(--teal-50))}
+  .pkg-row .price{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--teal-900);letter-spacing:.03em;line-height:1}
+  .pkg-row .price small{font-family:'Manrope',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);display:block;font-weight:600;margin-bottom:2px}
+  .pkg-row .availability{display:flex;flex-direction:column;gap:6px;margin:16px 0 18px;font-size:12px}
+  .pkg-row .availability .today{color:var(--ok);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+  .pkg-row .btn-book{width:100%;justify-content:center}
+
+  .pkg-row.small-sold-out{opacity:.7}
+  .badge-left{display:flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:10.5px;letter-spacing:.14em;font-weight:700;text-transform:uppercase}
+  .badge-left.ok{background:#e4f3ea;color:var(--ok)}
+  .badge-left.warn{background:#faecd1;color:var(--warn)}
+
+  .map-toggle{display:none}
+
+  @media(max-width:960px){
+    .layout{grid-template-columns:1fr}
+    aside.filters{position:static}
+    .pkg-row{grid-template-columns:1fr}
+    .pkg-row .body{border-right:none;border-bottom:1px solid var(--line)}
+  }
+</style>
+</head>
+<body>
+
+<header class="cat-hero">
+  <div class="wrap inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> · <a href="#">Categories</a> · <span>Walking Tours</span></div>
+    <h1 data-i18n="cat.page.title">Walking Tours</h1>
+    <p data-i18n="cat.page.sub">Three walking routes to see Rome the way Romans do. Three hours, max 8 people, zero selfie sticks.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+
+  <aside class="filters">
+    <h5>FILTERS</h5>
+
+    <div class="filt-group">
+      <label style="font-weight:700;color:var(--teal-900);margin-bottom:10px"><span>Date</span></label>
+      <div class="date-pills">
+        <button class="on">Any</button>
+        <button>Today</button>
+        <button>Tomorrow</button>
+        <button>Weekend</button>
+        <button>Pick date</button>
+      </div>
+    </div>
+
+    <div class="filt-group">
+      <label style="font-weight:700;color:var(--teal-900);margin-bottom:6px"><span>Price (€)</span></label>
+      <div class="range">
+        <input type="range" min="20" max="300" value="120"/>
+        <div class="labels"><span>€20</span><span>€300</span></div>
+      </div>
+    </div>
+
+    <div class="filt-group">
+      <label style="font-weight:700;color:var(--teal-900);margin-bottom:6px"><span>Duration</span></label>
+      <label><input type="checkbox" checked/> Under 2h <span class="count">3</span></label>
+      <label><input type="checkbox" checked/> 2–4h <span class="count">8</span></label>
+      <label><input type="checkbox"/> Half day <span class="count">4</span></label>
+      <label><input type="checkbox"/> Full day <span class="count">2</span></label>
+    </div>
+
+    <div class="filt-group">
+      <label style="font-weight:700;color:var(--teal-900);margin-bottom:6px"><span>Language</span></label>
+      <label><input type="checkbox" checked/> English <span class="count">17</span></label>
+      <label><input type="checkbox" checked/> Italian <span class="count">17</span></label>
+      <label><input type="checkbox"/> French <span class="count">11</span></label>
+      <label><input type="checkbox"/> German <span class="count">8</span></label>
+      <label><input type="checkbox"/> Spanish <span class="count">6</span></label>
+    </div>
+
+    <div class="filt-group">
+      <label style="font-weight:700;color:var(--teal-900);margin-bottom:6px"><span>Group size</span></label>
+      <label><input type="checkbox" checked/> Small (≤8) <span class="count">9</span></label>
+      <label><input type="checkbox"/> Medium (9-15) <span class="count">5</span></label>
+      <label><input type="checkbox"/> Private <span class="count">4</span></label>
+    </div>
+
+    <div class="filt-group">
+      <label style="font-weight:700;color:var(--teal-900);margin-bottom:6px"><span>Features</span></label>
+      <label><input type="checkbox" checked/> Skip-the-line <span class="count">7</span></label>
+      <label><input type="checkbox"/> Wheelchair friendly <span class="count">5</span></label>
+      <label><input type="checkbox"/> Family-friendly <span class="count">12</span></label>
+      <label><input type="checkbox"/> Food included <span class="count">3</span></label>
+    </div>
+  </aside>
+
+  <div>
+    <div class="results-bar">
+      <div class="n"><b>17</b> walking tours · showing 1–6</div>
+      <div class="sort">
+        Sort by
+        <select>
+          <option>Recommended</option>
+          <option>Price ↑</option>
+          <option>Price ↓</option>
+          <option>Rating</option>
+          <option>Duration</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pkg-list">
+
+      <a class="pkg-row" href="Experience.html">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=900&q=80')">
+          <span class="chip chip-coral tag">Top seller</span>
+        </div>
+        <div class="body">
+          <div class="byline">COLOSSEUM · FORUM · PALATINE</div>
+          <h3>Colosseum Underground & Arena Floor</h3>
+          <p class="desc">Three hours with an archaeologist who'll take you where the guidebooks can't — the hypogeum passages and the reconstructed arena floor.</p>
+          <div class="meta">
+            <span>🕒 3h</span>
+            <span>👥 Max 12</span>
+            <span>🗣 EN · IT · FR</span>
+            <span class="badge-left ok">Free cancel</span>
+          </div>
+        </div>
+        <div class="aside">
+          <div>
+            <div class="price"><small>FROM</small>€74</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span> 4.96 <small style="color:var(--mute);font-weight:500">(2,104)</small></div>
+          </div>
+          <div>
+            <div class="availability"><span class="today">4 slots today</span><span>Next: 14:30 · 16:00</span></div>
+            <span class="btn btn-teal btn-book">Book</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pkg-row" href="Experience.html">
+        <div class="img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/CAPPELLA%20SISTINA%20Ceiling.jpg?width=1200')">
+          <span class="chip chip-teal tag">Featured</span>
+        </div>
+        <div class="body">
+          <div class="byline">VATICAN · SISTINE CHAPEL</div>
+          <h3>Vatican Museums & Sistine Chapel — Early Access</h3>
+          <p class="desc">Skip the morning queues entirely. Enter the museums 60 minutes before the public with Eleonora, a restorer-turned-guide.</p>
+          <div class="meta">
+            <span>🕒 3.5h</span>
+            <span>👥 Max 10</span>
+            <span>🗣 EN · IT</span>
+            <span class="badge-left warn">Only 3 left · May 9</span>
+          </div>
+        </div>
+        <div class="aside">
+          <div>
+            <div class="price"><small>FROM</small>€89</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span> 4.94 <small style="color:var(--mute);font-weight:500">(1,856)</small></div>
+          </div>
+          <div>
+            <div class="availability"><span class="today">3 slots today</span><span>Next: 07:30 · 09:00</span></div>
+            <span class="btn btn-teal btn-book">Book</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pkg-row" href="Experience.html">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=900&q=80')"></div>
+        <div class="body">
+          <div class="byline">TRASTEVERE · JEWISH GHETTO</div>
+          <h3>Trastevere & the Jewish Ghetto at Dusk</h3>
+          <p class="desc">Flavia's neighbourhood. Cobblestones, kosher bakeries, a glass of Frascati at a courtyard bar most tourists walk straight past.</p>
+          <div class="meta">
+            <span>🕒 2.5h</span>
+            <span>👥 Max 8</span>
+            <span>🗣 EN · IT</span>
+            <span class="badge-left ok">Food included</span>
+          </div>
+        </div>
+        <div class="aside">
+          <div>
+            <div class="price"><small>FROM</small>€62</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span> 4.98 <small style="color:var(--mute);font-weight:500">(932)</small></div>
+          </div>
+          <div>
+            <div class="availability"><span class="today">Available tomorrow</span><span>Next: 18:30</span></div>
+            <span class="btn btn-teal btn-book">Book</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pkg-row" href="Experience.html">
+        <div class="img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Interior%20oculus%20of%20the%20Rome%20Pantheon.jpg?width=1200')"></div>
+        <div class="body">
+          <div class="byline">PANTHEON · PIAZZA NAVONA · TREVI</div>
+          <h3>Baroque Rome Walk</h3>
+          <p class="desc">Four piazzas, one fountain, and a shocking amount of Bernini — in a 2-hour loop designed for first-time visitors.</p>
+          <div class="meta">
+            <span>🕒 2h</span>
+            <span>👥 Max 14</span>
+            <span>🗣 EN · IT · DE</span>
+            <span class="badge-left ok">Family-friendly</span>
+          </div>
+        </div>
+        <div class="aside">
+          <div>
+            <div class="price"><small>FROM</small>€38</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span> 4.89 <small style="color:var(--mute);font-weight:500">(3,120)</small></div>
+          </div>
+          <div>
+            <div class="availability"><span class="today">6 slots today</span><span>Next: 10:00 · 16:00</span></div>
+            <span class="btn btn-teal btn-book">Book</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pkg-row" href="Experience.html">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1498307833015-e7b400441eb8?w=900&q=80')"></div>
+        <div class="body">
+          <div class="byline">CATACOMBS · APPIA ANTICA</div>
+          <h3>Catacombs & Ancient Appian Way</h3>
+          <p class="desc">Underground basilicas, Roman milestones, and a bike loop along the original Via Appia — with a stop for espresso at a roadside bar.</p>
+          <div class="meta">
+            <span>🕒 4h</span>
+            <span>👥 Max 10</span>
+            <span>🗣 EN · IT</span>
+            <span class="badge-left ok">Free cancel</span>
+          </div>
+        </div>
+        <div class="aside">
+          <div>
+            <div class="price"><small>FROM</small>€69</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span> 4.87 <small style="color:var(--mute);font-weight:500">(512)</small></div>
+          </div>
+          <div>
+            <div class="availability"><span class="today">Weekends only</span><span>Next: Sat 9:00</span></div>
+            <span class="btn btn-teal btn-book">Book</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pkg-row" href="Experience.html">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1525874684015-58379d421a52?w=900&q=80')"></div>
+        <div class="body">
+          <div class="byline">AVENTINO · TESTACCIO</div>
+          <h3>Aventino Hills at Sunrise</h3>
+          <p class="desc">The keyhole view, the Orange Garden, and an espresso with Emanuele at the only bar open at 6am. Small group, unhurried.</p>
+          <div class="meta">
+            <span>🕒 2h</span>
+            <span>👥 Max 6</span>
+            <span>🗣 EN · IT</span>
+            <span class="badge-left warn">Only 1 left · May 10</span>
+          </div>
+        </div>
+        <div class="aside">
+          <div>
+            <div class="price"><small>FROM</small>€45</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span> 4.99 <small style="color:var(--mute);font-weight:500">(308)</small></div>
+          </div>
+          <div>
+            <div class="availability"><span class="today">Sunrise only</span><span>Next: 6:15</span></div>
+            <span class="btn btn-teal btn-book">Book</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <div style="margin-top:40px;display:flex;justify-content:center;gap:6px">
+      <button class="nav-iconbtn" style="background:#fff">←</button>
+      <button class="nav-iconbtn" style="background:var(--teal-800);color:#fff;border-color:var(--teal-800)">1</button>
+      <button class="nav-iconbtn" style="background:#fff">2</button>
+      <button class="nav-iconbtn" style="background:#fff">3</button>
+      <button class="nav-iconbtn" style="background:#fff">→</button>
+    </div>
+  </div>
+</div>
+
+<script src="i18n.js"></script>
+<script src="components.js"></script>
+<script>
+  window.ST_TWEAKS = /*EDITMODE-BEGIN*/{"teal":"#0a4a5c","coral":"#e8634a","hero_layout":"A"}/*EDITMODE-END*/;
+  STComponents.mountNav('cat', false);
+  STComponents.mountFooter();
+  STComponents.mountTweaks({});
+
+  document.querySelectorAll('.date-pills button').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.preventDefault();
+      b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Admin — SocialTravels</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{background:#f2ebe0}
+  .admin{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+  .a-side{
+    background:var(--teal-900);color:#fff;padding:24px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .a-side .logo{font-family:'Bebas Neue';font-size:24px;letter-spacing:.06em;margin-bottom:4px;padding:0 10px}
+  .a-side .logo small{display:block;font-family:'Manrope',sans-serif;font-size:10px;letter-spacing:.24em;color:var(--coral);font-weight:700;margin-top:-4px}
+  .a-side h6{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:700;margin:20px 10px 8px}
+  .a-side a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;font-size:13.5px;color:rgba(255,255,255,.75);font-weight:500;transition:all .2s}
+  .a-side a:hover{background:rgba(255,255,255,.06);color:#fff}
+  .a-side a.on{background:var(--coral);color:#fff;font-weight:600}
+  .a-side a .c{margin-left:auto;background:rgba(255,255,255,.15);font-size:10px;padding:2px 7px;border-radius:999px;font-weight:700}
+  .a-side a.on .c{background:rgba(255,255,255,.25)}
+  .a-profile{margin-top:auto;padding:14px 10px 4px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:10px;align-items:center}
+  .a-profile .av{width:34px;height:34px;border-radius:50%;background:var(--coral);display:grid;place-items:center;font-family:'Bebas Neue';font-size:14px}
+  .a-profile .info{font-size:12.5px;line-height:1.2}
+  .a-profile .info small{color:rgba(255,255,255,.6);font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+
+  .a-main{padding:28px 36px 60px;background:#f2ebe0}
+  .a-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+  .a-head h1{font-family:'Bebas Neue';font-size:42px;letter-spacing:.02em;color:var(--teal-900);margin:0 0 4px;font-weight:400}
+  .a-head .sub{font-size:13px;color:var(--mute)}
+  .a-head .actions{display:flex;gap:10px;align-items:center}
+  .a-search{background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 16px 10px 42px;width:300px;font-size:13px;color:var(--ink);position:relative;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%237a8a92" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>');background-repeat:no-repeat;background-position:16px center;font-family:inherit;outline:none;transition:border-color .2s}
+  .a-search:focus{border-color:var(--teal-700)}
+  .date-range{background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--teal-900);display:flex;align-items:center;gap:8px;cursor:pointer}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;position:relative;overflow:hidden;transition:transform .2s}
+  .kpi:hover{transform:translateY(-2px)}
+  .kpi::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--teal-500)}
+  .kpi.coral::before{background:var(--coral)}
+  .kpi.gold::before{background:#d4a940}
+  .kpi.green::before{background:var(--ok)}
+  .kpi .lbl{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:700}
+  .kpi .v{font-family:'Bebas Neue';font-size:44px;color:var(--teal-900);letter-spacing:.02em;line-height:1;margin-top:6px}
+  .kpi .trend{font-size:12px;margin-top:8px;font-weight:700;display:flex;align-items:center;gap:4px}
+  .kpi .trend.up{color:var(--ok)}
+  .kpi .trend.down{color:var(--coral-dark)}
+  .kpi .spark{position:absolute;bottom:12px;right:14px;opacity:.5}
+
+  /* Row layouts */
+  .row2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:20px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h3{margin:0 0 4px;font-size:16px;color:var(--teal-900);font-weight:700}
+  .card .sub{font-size:12px;color:var(--mute);margin-bottom:16px}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+  .card-head .tabs{display:flex;gap:4px;background:var(--sand-2);border-radius:999px;padding:3px}
+  .card-head .tabs button{padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ink-2)}
+  .card-head .tabs button.on{background:#fff;color:var(--teal-900);box-shadow:var(--shadow-sm)}
+
+  /* Chart */
+  .chart{height:260px;position:relative}
+  .chart svg{width:100%;height:100%}
+  .chart .legend{position:absolute;top:0;right:0;display:flex;gap:14px;font-size:11px;color:var(--ink-2)}
+  .chart .legend span{display:inline-flex;align-items:center;gap:6px}
+  .chart .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+  /* Top tours list */
+  .top-list{display:flex;flex-direction:column;gap:2px}
+  .top-item{display:grid;grid-template-columns:40px 1fr auto;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+  .top-item:last-child{border-bottom:none}
+  .top-item .rank{font-family:'Bebas Neue';font-size:22px;color:var(--teal-900);opacity:.3}
+  .top-item .nm{font-weight:600;font-size:13.5px;color:var(--teal-900);line-height:1.25}
+  .top-item .sub{font-size:11px;color:var(--mute);margin-top:2px}
+  .top-item .metric{text-align:right}
+  .top-item .metric .n{font-family:'Bebas Neue';font-size:18px;color:var(--teal-900);letter-spacing:.02em}
+  .top-item .metric .l{font-size:10px;letter-spacing:.14em;color:var(--mute);font-weight:700}
+  .top-item .bar{grid-column:2;height:3px;background:var(--sand-2);border-radius:2px;margin-top:6px;position:relative;overflow:hidden}
+  .top-item .bar i{display:block;height:100%;background:var(--coral);border-radius:2px}
+
+  /* Donut */
+  .donut-wrap{display:flex;gap:20px;align-items:center}
+  .donut{width:150px;height:150px;position:relative;flex-shrink:0}
+  .donut .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .donut .center .n{font-family:'Bebas Neue';font-size:32px;color:var(--teal-900);letter-spacing:.02em;line-height:1}
+  .donut .center .l{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:700}
+  .donut-legend{flex:1;display:flex;flex-direction:column;gap:8px}
+  .donut-legend .dl{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);padding:4px 0}
+  .donut-legend .dl .dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+  .donut-legend .dl .pct{margin-left:auto;font-weight:700;color:var(--teal-900)}
+
+  /* Map */
+  .geo{background:
+    linear-gradient(145deg,rgba(14,100,120,.05),rgba(232,99,74,.03)),
+    url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&q=80') center/cover;
+    height:220px;border-radius:10px;position:relative;border:1px solid var(--line)}
+  .geo .pin{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--coral);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transform:translate(-50%,-50%);cursor:pointer;animation:pulse 2.4s infinite}
+  .geo .pin.lg{width:22px;height:22px;background:var(--coral-dark)}
+  @keyframes pulse{0%,100%{box-shadow:0 2px 6px rgba(0,0,0,.25),0 0 0 0 rgba(232,99,74,.5)}50%{box-shadow:0 2px 6px rgba(0,0,0,.25),0 0 0 12px rgba(232,99,74,0)}}
+
+  /* Bookings table */
+  .table-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:20px}
+  .table-head{padding:22px 24px 14px;display:flex;justify-content:space-between;align-items:center}
+  .table-head h3{font-size:16px;color:var(--teal-900);margin:0;font-weight:700}
+  .table-filter{display:flex;gap:6px}
+  .table-filter button{padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;background:var(--sand-2);color:var(--ink-2);letter-spacing:.04em}
+  .table-filter button.on{background:var(--teal-800);color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead{background:var(--sand);color:var(--teal-700);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+  th{text-align:left;padding:10px 24px}
+  td{padding:14px 24px;border-top:1px solid var(--line);color:var(--ink)}
+  tr:hover td{background:var(--sand)}
+  td.g{color:var(--ink-2);font-size:12.5px}
+  td b{color:var(--teal-900);font-weight:700}
+  .status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:10.5px;letter-spacing:.12em;font-weight:700;text-transform:uppercase}
+  .status.ok{background:#e4f3ea;color:var(--ok)}
+  .status.pend{background:#faecd1;color:var(--warn)}
+  .status.cxl{background:#fadfd8;color:#b94e3a}
+  .guest{display:flex;align-items:center;gap:10px}
+  .guest .av{width:30px;height:30px;border-radius:50%;background:var(--teal-50);color:var(--teal-800);display:grid;place-items:center;font-family:'Bebas Neue';font-size:13px;letter-spacing:.04em}
+  .row-act{display:flex;gap:4px}
+  .row-act button{width:28px;height:28px;border-radius:8px;background:var(--sand-2);color:var(--teal-700);display:grid;place-items:center;transition:background .2s}
+  .row-act button:hover{background:var(--teal-100)}
+
+  /* Quick actions */
+  .qactions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
+  .qact{background:var(--sand);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;text-align:left}
+  .qact:hover{background:var(--teal-50);border-color:var(--teal-100)}
+  .qact .icn{width:32px;height:32px;border-radius:8px;background:var(--teal-800);color:#fff;display:grid;place-items:center;flex-shrink:0}
+  .qact .t{font-weight:700;font-size:12.5px;color:var(--teal-900);line-height:1.2}
+  .qact .d{font-size:10.5px;color:var(--mute);margin-top:2px}
+
+  /* Alerts */
+  .alert{display:flex;gap:12px;padding:12px;border-radius:10px;margin-bottom:8px;background:var(--sand)}
+  .alert .icn{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;color:#fff}
+  .alert.warn{background:#fdf3dc}.alert.warn .icn{background:var(--warn)}
+  .alert.err{background:#fadfd8}.alert.err .icn{background:#b94e3a}
+  .alert.info .icn{background:var(--teal-700)}
+  .alert .body .t{font-weight:700;font-size:13px;color:var(--teal-900)}
+  .alert .body .d{font-size:12px;color:var(--ink-2);margin-top:2px}
+  .alert .time{font-size:10.5px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-left:auto;white-space:nowrap}
+
+  @media(max-width:960px){
+    .admin{grid-template-columns:1fr}
+    .a-side{position:static;height:auto}
+    .kpis,.row3{grid-template-columns:1fr 1fr}
+    .row2{grid-template-columns:1fr}
+    .qactions{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="admin">
+  <!-- SIDEBAR -->
+  <aside class="a-side">
+    <div class="logo">SOCIALTRAVELS<small>ADMIN · v2.6</small></div>
+
+    <h6>OVERVIEW</h6>
+    <a href="#" class="on"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>Analytics</a>
+
+    <h6>OPERATIONS</h6>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>Bookings <span class="c">127</span></a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg>Experiences <span class="c">240</span></a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Calendar</a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Guides <span class="c">34</span></a>
+
+    <h6>REVENUE</h6>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Revenue</a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4z"/><path d="M4 10h16"/></svg>Payouts <span class="c">3</span></a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Pricing rules</a>
+
+    <h6>PEOPLE</h6>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Customers</a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M6 18V8l6-4 6 4v10"/></svg>Partners <span class="c">128</span></a>
+
+    <h6>GROWTH</h6>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Campaigns</a>
+    <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s-8-4.5-8-12a8 8 0 1 1 16 0c0 7.5-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>Reviews <span class="c">8</span></a>
+
+    <div class="a-profile">
+      <div class="av">GR</div>
+      <div class="info">
+        Giulia Romano<br>
+        <small>OPS MANAGER</small>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="a-main">
+    <div class="a-head">
+      <div>
+        <h1>DASHBOARD</h1>
+        <div class="sub">Good morning, Giulia. Here's what's happening today — <b style="color:var(--teal-700)">Mon, May 5 · 9:42</b></div>
+      </div>
+      <div class="actions">
+        <input class="a-search" placeholder="Search bookings, guests, tours…"/>
+        <button class="date-range">
+          📅 Last 30 days
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button class="btn btn-coral" style="padding:10px 16px;font-size:12px">+ New booking</button>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpis">
+      <div class="kpi">
+        <div class="lbl">BOOKINGS / 30D</div>
+        <div class="v">1,248</div>
+        <div class="trend up">↑ 14.3% vs. prev period</div>
+        <svg class="spark" width="70" height="28" viewBox="0 0 100 40"><path d="M0,30 L15,25 L30,28 L45,18 L60,22 L75,10 L90,14 L100,4" stroke="#1f8aa1" stroke-width="2" fill="none"/></svg>
+      </div>
+      <div class="kpi coral">
+        <div class="lbl">REVENUE / 30D</div>
+        <div class="v">€184,920</div>
+        <div class="trend up">↑ 22.7% vs. prev period</div>
+        <svg class="spark" width="70" height="28" viewBox="0 0 100 40"><path d="M0,34 L15,28 L30,30 L45,20 L60,16 L75,12 L90,8 L100,4" stroke="#e8634a" stroke-width="2" fill="none"/></svg>
+      </div>
+      <div class="kpi gold">
+        <div class="lbl">AVG. BOOKING VALUE</div>
+        <div class="v">€148</div>
+        <div class="trend up">↑ €12 vs. prev period</div>
+        <svg class="spark" width="70" height="28" viewBox="0 0 100 40"><path d="M0,28 L15,30 L30,24 L45,26 L60,18 L75,20 L90,14 L100,12" stroke="#d4a940" stroke-width="2" fill="none"/></svg>
+      </div>
+      <div class="kpi green">
+        <div class="lbl">NPS · LAST 30D</div>
+        <div class="v">78</div>
+        <div class="trend up">↑ 4 pts · 4.92 ★ avg</div>
+        <svg class="spark" width="70" height="28" viewBox="0 0 100 40"><path d="M0,22 L15,24 L30,20 L45,18 L60,14 L75,16 L90,10 L100,8" stroke="#2e8b57" stroke-width="2" fill="none"/></svg>
+      </div>
+    </div>
+
+    <!-- ROW: Chart + Top tours -->
+    <div class="row2">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Bookings & Revenue</h3>
+            <div class="sub">Daily · Apr 5 – May 5</div>
+          </div>
+          <div class="tabs">
+            <button>7d</button>
+            <button class="on">30d</button>
+            <button>90d</button>
+            <button>1y</button>
+          </div>
+        </div>
+        <div class="chart">
+          <div class="legend">
+            <span><i style="background:#1f8aa1"></i>Bookings</span>
+            <span><i style="background:#e8634a"></i>Revenue (€k)</span>
+          </div>
+          <svg viewBox="0 0 800 240" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="tg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1f8aa1" stop-opacity=".3"/><stop offset="1" stop-color="#1f8aa1" stop-opacity="0"/></linearGradient>
+              <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e8634a" stop-opacity=".25"/><stop offset="1" stop-color="#e8634a" stop-opacity="0"/></linearGradient>
+            </defs>
+            <!-- grid -->
+            <g stroke="#e8dfcf" stroke-width="1">
+              <line x1="0" y1="48" x2="800" y2="48"/><line x1="0" y1="96" x2="800" y2="96"/>
+              <line x1="0" y1="144" x2="800" y2="144"/><line x1="0" y1="192" x2="800" y2="192"/>
+            </g>
+            <!-- teal area -->
+            <path d="M0,180 L27,170 L53,175 L80,160 L106,155 L133,165 L160,140 L186,145 L213,130 L240,120 L266,130 L293,110 L320,115 L346,100 L373,110 L400,90 L426,85 L453,95 L480,75 L506,80 L533,65 L560,70 L586,55 L613,60 L640,45 L666,55 L693,38 L720,48 L746,30 L773,38 L800,22 L800,240 L0,240 Z" fill="url(#tg)"/>
+            <path d="M0,180 L27,170 L53,175 L80,160 L106,155 L133,165 L160,140 L186,145 L213,130 L240,120 L266,130 L293,110 L320,115 L346,100 L373,110 L400,90 L426,85 L453,95 L480,75 L506,80 L533,65 L560,70 L586,55 L613,60 L640,45 L666,55 L693,38 L720,48 L746,30 L773,38 L800,22" stroke="#1f8aa1" stroke-width="2.5" fill="none"/>
+            <!-- coral line -->
+            <path d="M0,200 L27,195 L53,198 L80,185 L106,180 L133,188 L160,170 L186,175 L213,158 L240,150 L266,160 L293,135 L320,142 L346,125 L373,135 L400,112 L426,108 L453,118 L480,92 L506,98 L533,78 L560,85 L586,68 L613,72 L640,55 L666,65 L693,48 L720,55 L746,38 L773,42 L800,28" stroke="#e8634a" stroke-width="2.5" fill="none"/>
+            <!-- x ticks -->
+            <g fill="#7a8a92" font-size="10" font-family="Manrope">
+              <text x="0" y="232">Apr 5</text><text x="200" y="232">Apr 12</text>
+              <text x="400" y="232">Apr 19</text><text x="600" y="232">Apr 26</text>
+              <text x="770" y="232">May 5</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Top experiences</h3>
+            <div class="sub">By revenue · last 30d</div>
+          </div>
+          <button style="font-size:11px;color:var(--teal-700);font-weight:700">VIEW ALL →</button>
+        </div>
+        <div class="top-list">
+          <div class="top-item">
+            <div class="rank">01</div>
+            <div>
+              <div class="nm">Colosseum Underground</div>
+              <div class="sub">Walking · 3h · Max 12</div>
+              <div class="bar"><i style="width:100%"></i></div>
+            </div>
+            <div class="metric"><div class="n">€38.4k</div><div class="l">287 BK</div></div>
+          </div>
+          <div class="top-item">
+            <div class="rank">02</div>
+            <div>
+              <div class="nm">Vatican Early Access</div>
+              <div class="sub">Walking · 3.5h · Max 10</div>
+              <div class="bar"><i style="width:72%"></i></div>
+            </div>
+            <div class="metric"><div class="n">€27.6k</div><div class="l">204 BK</div></div>
+          </div>
+          <div class="top-item">
+            <div class="rank">03</div>
+            <div>
+              <div class="nm">Pasta with Nonna Adele</div>
+              <div class="sub">Cooking · 3.5h · Max 8</div>
+              <div class="bar"><i style="width:55%"></i></div>
+            </div>
+            <div class="metric"><div class="n">€21.0k</div><div class="l">158 BK</div></div>
+          </div>
+          <div class="top-item">
+            <div class="rank">04</div>
+            <div>
+              <div class="nm">Centro Storico Golf Cart</div>
+              <div class="sub">Golf · 3h · Max 6</div>
+              <div class="bar"><i style="width:38%"></i></div>
+            </div>
+            <div class="metric"><div class="n">€14.6k</div><div class="l">84 BK</div></div>
+          </div>
+          <div class="top-item">
+            <div class="rank">05</div>
+            <div>
+              <div class="nm">Trastevere Food Tour</div>
+              <div class="sub">Food · 3h · Max 8</div>
+              <div class="bar"><i style="width:30%"></i></div>
+            </div>
+            <div class="metric"><div class="n">€11.5k</div><div class="l">102 BK</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW: Channel mix + Geo + Alerts -->
+    <div class="row3">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Channel mix</h3>
+            <div class="sub">By bookings · last 30d</div>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut">
+            <svg viewBox="0 0 40 40" style="transform:rotate(-90deg)">
+              <circle cx="20" cy="20" r="15.9" fill="none" stroke="#ece5da" stroke-width="6"/>
+              <circle cx="20" cy="20" r="15.9" fill="none" stroke="#e8634a" stroke-width="6" stroke-dasharray="38 100" stroke-dashoffset="0"/>
+              <circle cx="20" cy="20" r="15.9" fill="none" stroke="#1f8aa1" stroke-width="6" stroke-dasharray="32 100" stroke-dashoffset="-38"/>
+              <circle cx="20" cy="20" r="15.9" fill="none" stroke="#d4a940" stroke-width="6" stroke-dasharray="18 100" stroke-dashoffset="-70"/>
+              <circle cx="20" cy="20" r="15.9" fill="none" stroke="#2e8b57" stroke-width="6" stroke-dasharray="12 100" stroke-dashoffset="-88"/>
+            </svg>
+            <div class="center"><div><div class="n">1.2k</div><div class="l">BOOKINGS</div></div></div>
+          </div>
+          <div class="donut-legend">
+            <div class="dl"><span class="dot" style="background:#e8634a"></span>Direct site <span class="pct">38%</span></div>
+            <div class="dl"><span class="dot" style="background:#1f8aa1"></span>B2B partners <span class="pct">32%</span></div>
+            <div class="dl"><span class="dot" style="background:#d4a940"></span>GetYourGuide <span class="pct">18%</span></div>
+            <div class="dl"><span class="dot" style="background:#2e8b57"></span>TripAdvisor <span class="pct">12%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Guest origin</h3>
+            <div class="sub">Top markets · last 30d</div>
+          </div>
+        </div>
+        <div class="geo">
+          <div class="pin lg" style="top:38%;left:25%" title="USA 32%"></div>
+          <div class="pin" style="top:35%;left:48%" title="UK 18%"></div>
+          <div class="pin" style="top:40%;left:52%" title="DE 12%"></div>
+          <div class="pin" style="top:42%;left:50%" title="FR 9%"></div>
+          <div class="pin" style="top:38%;left:55%" title="NL 6%"></div>
+          <div class="pin" style="top:60%;left:78%" title="AU 5%"></div>
+          <div class="pin" style="top:62%;left:30%" title="BR 4%"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;font-size:11.5px;text-align:center">
+          <div><b style="font-family:'Bebas Neue';font-size:18px;color:var(--teal-900);letter-spacing:.02em">32%</b><div style="color:var(--mute);letter-spacing:.12em;font-size:10px">🇺🇸 USA</div></div>
+          <div><b style="font-family:'Bebas Neue';font-size:18px;color:var(--teal-900);letter-spacing:.02em">18%</b><div style="color:var(--mute);letter-spacing:.12em;font-size:10px">🇬🇧 UK</div></div>
+          <div><b style="font-family:'Bebas Neue';font-size:18px;color:var(--teal-900);letter-spacing:.02em">12%</b><div style="color:var(--mute);letter-spacing:.12em;font-size:10px">🇩🇪 DE</div></div>
+          <div><b style="font-family:'Bebas Neue';font-size:18px;color:var(--teal-900);letter-spacing:.02em">9%</b><div style="color:var(--mute);letter-spacing:.12em;font-size:10px">🇫🇷 FR</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Alerts · 4</h3>
+            <div class="sub">Requires your attention</div>
+          </div>
+          <button style="font-size:11px;color:var(--teal-700);font-weight:700">DISMISS ALL</button>
+        </div>
+        <div class="alert err">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4m0 4h.01M4.9 19h14.2a2 2 0 0 0 1.8-3l-7.1-12a2 2 0 0 0-3.6 0L3.1 16a2 2 0 0 0 1.8 3z"/></svg></div>
+          <div class="body">
+            <div class="t">Guide Flavia cancelled — Sat 14:00 slot</div>
+            <div class="d">Colosseum Underground · 4 guests to reassign</div>
+          </div>
+          <div class="time">6 MIN</div>
+        </div>
+        <div class="alert warn">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></div>
+          <div class="body">
+            <div class="t">Vatican tomorrow 09:00 — 10 guests, 8 seats</div>
+            <div class="d">Open second group or reassign to 10:30</div>
+          </div>
+          <div class="time">22 MIN</div>
+        </div>
+        <div class="alert warn">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s-8-4.5-8-12a8 8 0 1 1 16 0c0 7.5-8 12-8 12z"/></svg></div>
+          <div class="body">
+            <div class="t">Partner Raphaël hit Gold tier</div>
+            <div class="d">Auto-upgraded to 18% commission</div>
+          </div>
+          <div class="time">1H</div>
+        </div>
+        <div class="alert info">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+          <div class="body">
+            <div class="t">New 5★ review from Amelia H.</div>
+            <div class="d">"Best three hours of the week" — shareable</div>
+          </div>
+          <div class="time">2H</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOKINGS TABLE -->
+    <div class="table-card">
+      <div class="table-head">
+        <div>
+          <h3>Recent bookings</h3>
+          <div class="sub" style="font-size:12px;color:var(--mute);margin-top:2px">Today · 34 new bookings · €4,980</div>
+        </div>
+        <div class="table-filter">
+          <button class="on">All</button>
+          <button>Confirmed</button>
+          <button>Pending</button>
+          <button>Cancelled</button>
+          <button>VIP</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Ref</th><th>Guest</th><th>Experience</th><th>Date / slot</th><th>Party</th><th>Channel</th><th>Revenue</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="g">BK-08471</td>
+            <td><div class="guest"><div class="av">MR</div>Marta Rossi</div></td>
+            <td><b>Colosseum Underground</b><div class="g">Marco F. · EN</div></td>
+            <td>Sat May 9 · 11:00</td>
+            <td class="g">2 ad</td>
+            <td class="g">Direct</td>
+            <td><b>€148</b></td>
+            <td><span class="status ok">✓ Confirmed</span></td>
+            <td><div class="row-act"><button>👁</button><button>✉</button></div></td>
+          </tr>
+          <tr>
+            <td class="g">BK-08472</td>
+            <td><div class="guest"><div class="av" style="background:var(--coral-50);color:var(--coral-dark)">AS</div>Alexandra Schmidt</div></td>
+            <td><b>Vatican Early Access</b><div class="g">Eleonora M. · DE</div></td>
+            <td>Sun May 10 · 07:30</td>
+            <td class="g">4 ad · 1 ch</td>
+            <td class="g">Raphaël 🏨</td>
+            <td><b>€423</b></td>
+            <td><span class="status ok">✓ Confirmed</span></td>
+            <td><div class="row-act"><button>👁</button><button>✉</button></div></td>
+          </tr>
+          <tr>
+            <td class="g">BK-08473</td>
+            <td><div class="guest"><div class="av" style="background:#fdf3dc;color:var(--warn)">DK</div>Daisuke Kobayashi</div></td>
+            <td><b>Pasta with Nonna Adele</b><div class="g">Adele · EN</div></td>
+            <td>Mon May 11 · 16:30</td>
+            <td class="g">2 ad</td>
+            <td class="g">GetYourGuide</td>
+            <td><b>€190</b></td>
+            <td><span class="status pend">⏱ Pending</span></td>
+            <td><div class="row-act"><button>👁</button><button>✉</button></div></td>
+          </tr>
+          <tr>
+            <td class="g">BK-08474</td>
+            <td><div class="guest"><div class="av" style="background:var(--teal-50);color:var(--teal-800)">LC</div>Lucas Costa</div></td>
+            <td><b>Trastevere Food Tour</b><div class="g">Flavia R. · PT</div></td>
+            <td>Fri May 8 · 18:30</td>
+            <td class="g">6 ad</td>
+            <td class="g">Direct</td>
+            <td><b>€468</b></td>
+            <td><span class="status ok">✓ Confirmed</span></td>
+            <td><div class="row-act"><button>👁</button><button>✉</button></div></td>
+          </tr>
+          <tr>
+            <td class="g">BK-08475</td>
+            <td><div class="guest"><div class="av" style="background:#e4f3ea;color:var(--ok)">NP</div>Nadia Petrov</div></td>
+            <td><b>Centro Storico Golf Cart</b><div class="g">Private · EN</div></td>
+            <td>Sat May 9 · 10:00</td>
+            <td class="g">4 ad</td>
+            <td class="g">J.K. Place 🏨</td>
+            <td><b>€480</b></td>
+            <td><span class="status ok">✓ Confirmed · VIP</span></td>
+            <td><div class="row-act"><button>👁</button><button>✉</button></div></td>
+          </tr>
+          <tr>
+            <td class="g">BK-08476</td>
+            <td><div class="guest"><div class="av" style="background:#fadfd8;color:#b94e3a">HO</div>Hannah O'Brien</div></td>
+            <td><b>Tivoli Day Trip</b><div class="g">David T. · EN</div></td>
+            <td>Tue May 12 · 09:00</td>
+            <td class="g">2 ad</td>
+            <td class="g">TripAdvisor</td>
+            <td><b>€258</b></td>
+            <td><span class="status cxl">✗ Cancelled</span></td>
+            <td><div class="row-act"><button>👁</button><button>✉</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Quick actions</h3>
+          <div class="sub">Common tasks for today</div>
+        </div>
+      </div>
+      <div class="qactions">
+        <button class="qact">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div><div class="t">Create experience</div><div class="d">Add a new tour to catalogue</div></div>
+        </button>
+        <button class="qact">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+          <div><div class="t">Onboard guide</div><div class="d">Invite a new local guide</div></div>
+        </button>
+        <button class="qact">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+          <div><div class="t">Launch campaign</div><div class="d">Email, SMS or push</div></div>
+        </button>
+        <button class="qact">
+          <div class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div><div class="t">Reply to reviews</div><div class="d">8 awaiting response</div></div>
+        </button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="i18n.js"></script>
+<script src="components.js"></script>
+<script>
+  window.ST_TWEAKS = /*EDITMODE-BEGIN*/{"teal":"#0a4a5c","coral":"#e8634a","hero_layout":"A"}/*EDITMODE-END*/;
+  STComponents.mountTweaks({});
+  document.querySelectorAll('.table-filter button, .card-head .tabs button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>
