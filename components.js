@@ -3,9 +3,9 @@
   const NAV_HTML = (activePage, onHero) => `
   <nav class="st-nav ${onHero?'on-hero':''}">
     <div class="wrap">
-      <a href="SocialTravels.html" class="logo"><span class="logo-mark"></span> SOCIALTRAVELS</a>
+      <a href="index.html" class="logo"><span class="logo-mark"></span> SOCIALTRAVELS</a>
       <div class="nav-links">
-        <a href="SocialTravels.html" data-i18n="nav.destinations" class="${activePage==='home'?'active':''}">Experiences</a>
+        <a href="index.html" data-i18n="nav.destinations" class="${activePage==='home'?'active':''}">Experiences</a>
         <a href="Category.html" data-i18n="nav.categories" class="${activePage==='cat'?'active':''}">Categories</a>
         <a href="Experience.html" data-i18n="nav.rome" class="${activePage==='exp'?'active':''}">Rome</a>
         <a href="#" data-i18n="nav.journal">Journal</a>
@@ -111,7 +111,6 @@
       el.innerHTML = FOOTER_HTML;
       document.body.appendChild(el.firstElementChild);
       window.STI18N && window.STI18N.applyLang();
-    },
     },
     mountTweaks(opts){
       const el = document.createElement('div');
