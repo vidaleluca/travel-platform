@@ -45,7 +45,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   border-bottom:1px solid var(--line);
 }
 .st-nav.on-hero{
-  position:absolute;background:transparent;border:none;
+  position:absolute;left:0;right:0;background:transparent;border:none;
 }
 .st-nav .wrap{display:flex;align-items:center;gap:32px;padding-top:18px;padding-bottom:18px}
 .logo{
