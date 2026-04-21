@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Meridiano — Curated Travel Journeys</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  /*EDITMODE-BEGIN-MARKER*/
+  :root{
+    --teal-900:#072d38;
+    --teal-800:#0a4a5c;
+    --teal-700:#0e6478;
+    --teal-500:#1f8aa1;
+    --teal-50:#e6f1f3;
+    --coral:#e8634a;
+    --coral-dark:#c74a32;
+    --sand:#f6f1ea;
+    --sand-2:#ece5da;
+    --ink:#15232a;
+    --ink-2:#3a4a53;
+    --mute:#7a8a92;
+    --line:rgba(12,50,62,.12);
+    --radius:14px;
+    --shadow-sm:0 1px 2px rgba(10,30,40,.06), 0 2px 6px rgba(10,30,40,.05);
+    --shadow-md:0 10px 30px rgba(10,30,40,.12);
+    --shadow-lg:0 30px 70px rgba(10,30,40,.22);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Manrope',system-ui,sans-serif;
+    color:var(--ink);
+    background:var(--sand);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+
+  /* ---------- NAV ---------- */
+  nav.top{
+    position:absolute;top:0;left:0;right:0;z-index:20;
+    padding:22px 0;
+  }
+  nav.top .wrap{display:flex;align-items:center;gap:36px}
+  .logo{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:26px;letter-spacing:.22em;color:#fff;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo-dot{
+    width:22px;height:22px;border-radius:50%;
+    background:conic-gradient(from 180deg,#fff 0 50%,transparent 50% 100%);
+    border:1.5px solid #fff;
+    transform:rotate(-20deg);
+  }
+  .nav-links{display:flex;gap:28px;margin-left:auto;font-size:13.5px;letter-spacing:.06em;color:rgba(255,255,255,.9);font-weight:500}
+  .nav-links a{position:relative;padding:4px 0}
+  .nav-links a:hover{color:#fff}
+  .nav-cta{
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+    color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;
+    backdrop-filter:blur(8px);
+    transition:background .2s;
+  }
+  .nav-cta:hover{background:rgba(255,255,255,.24)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;height:780px;
+    background:
+      linear-gradient(180deg, rgba(7,45,56,.35) 0%, rgba(7,45,56,.55) 60%, rgba(7,45,56,.85) 100%),
+      url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=2000&q=80') center/cover;
+    color:#fff;
+    overflow:hidden;
+  }
+  .hero::after{
+    /* subtle teal tint overlay to match reference */
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(14,100,120,.18),rgba(7,45,56,.25));
+    mix-blend-mode:multiply;pointer-events:none;
+  }
+  .hero-inner{
+    position:relative;z-index:2;
+    padding-top:150px;text-align:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:11.5px;letter-spacing:.32em;text-transform:uppercase;
+    color:rgba(255,255,255,.85);font-weight:600;
+    padding:8px 18px;border:1px solid rgba(255,255,255,.25);
+    border-radius:999px;backdrop-filter:blur(8px);
+    background:rgba(255,255,255,.06);
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--coral)}
+  h1.display{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(80px,13vw,190px);
+    letter-spacing:.02em;line-height:.92;
+    margin:24px 0 18px;font-weight:400;
+    text-shadow:0 4px 40px rgba(0,0,0,.2);
+  }
+  h1.display .soft{color:rgba(255,255,255,.6);font-style:italic;font-family:'Fraunces',serif;font-size:.42em;letter-spacing:0;font-weight:400;display:block;margin-top:10px}
+  .hero-sub{
+    max-width:580px;margin:0 auto 40px;font-size:16px;color:rgba(255,255,255,.82);font-weight:400;
+  }
+
+  /* search bar */
+  .search{
+    max-width:920px;margin:0 auto;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    backdrop-filter:blur(18px) saturate(1.1);
+    -webkit-backdrop-filter:blur(18px) saturate(1.1);
+    border-radius:18px;padding:10px;
+    display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:2px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .search .field{
+    padding:14px 18px;display:flex;flex-direction:column;gap:4px;
+    border-radius:12px;text-align:left;cursor:pointer;transition:background .2s;
+    border-right:1px solid rgba(255,255,255,.12);
+  }
+  .search .field:last-of-type{border-right:none}
+  .search .field:hover{background:rgba(255,255,255,.07)}
+  .search .lbl{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600}
+  .search .val{font-size:15px;color:#fff;font-weight:500}
+  .search .val.placeholder{color:rgba(255,255,255,.5)}
+  .search-btn{
+    background:var(--coral);color:#fff;border-radius:12px;
+    padding:0 28px;font-weight:700;font-size:14px;letter-spacing:.05em;
+    display:flex;align-items:center;gap:10px;
+    transition:background .2s, transform .1s;
+  }
+  .search-btn:hover{background:var(--coral-dark)}
+  .search-btn:active{transform:scale(.98)}
+
+  /* stat strip */
+  .hero-stats{
+    position:absolute;left:0;right:0;bottom:0;z-index:2;
+    display:flex;justify-content:center;gap:60px;
+    padding:28px 0;
+    border-top:1px solid rgba(255,255,255,.15);
+    background:linear-gradient(180deg,transparent,rgba(7,45,56,.4));
+  }
+  .hero-stats .stat{text-align:center;color:#fff}
+  .hero-stats .num{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.05em;color:#fff}
+  .hero-stats .lbl{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-top:2px}
+
+  /* ---------- SECTION TITLES ---------- */
+  section{padding:110px 0}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:56px}
+  .kicker{
+    font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--teal-700);font-weight:700;margin-bottom:14px;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .kicker::before{content:"";width:28px;height:1.5px;background:var(--coral)}
+  h2{
+    font-family:'Bebas Neue',sans-serif;font-weight:400;
+    font-size:clamp(40px,5.4vw,74px);line-height:.95;letter-spacing:.01em;
+    margin:0;color:var(--teal-900);
+  }
+  h2 .ital{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:.75em;color:var(--coral)}
+  .section-head p{max-width:420px;color:var(--ink-2);margin:0;font-size:15px}
+  .link-more{
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--teal-800);
+    display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:1px solid var(--line);border-radius:999px;
+    transition:background .2s,border-color .2s;
+  }
+  .link-more:hover{background:var(--teal-800);color:#fff;border-color:var(--teal-800)}
+
+  /* ---------- POPULAR DESTINATIONS ---------- */
+  .dest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .dest{
+    position:relative;aspect-ratio:3/4;border-radius:var(--radius);overflow:hidden;
+    cursor:pointer;background:#ddd;
+    box-shadow:var(--shadow-sm);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s;
+  }
+  .dest:hover{transform:translateY(-6px);box-shadow:var(--shadow-md)}
+  .dest img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+  .dest:hover img{transform:scale(1.06)}
+  .dest::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(7,45,56,.8) 100%);
+  }
+  .dest .info{
+    position:absolute;left:18px;right:18px;bottom:18px;z-index:2;color:#fff;
+    display:flex;align-items:flex-end;justify-content:space-between;
+  }
+  .dest .info .place{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em;line-height:1}
+  .dest .info .country{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-top:4px}
+  .dest .info .price{background:rgba(255,255,255,.92);color:var(--teal-900);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700}
+  .dest .tag{
+    position:absolute;top:14px;left:14px;z-index:2;
+    background:rgba(255,255,255,.92);color:var(--teal-900);
+    font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+    padding:6px 10px;border-radius:999px;
+  }
+  .dest.featured{grid-row:span 2;aspect-ratio:auto}
+
+  /* ---------- FEATURE ROW ---------- */
+  .features{background:#fff;padding:72px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+  .feat{padding:18px 28px;display:flex;flex-direction:column;gap:8px;border-right:1px solid var(--line)}
+  .feat:last-child{border-right:none}
+  .feat .icn{
+    width:42px;height:42px;border-radius:50%;background:var(--teal-50);
+    color:var(--teal-700);display:flex;align-items:center;justify-content:center;
+    margin-bottom:8px;
+  }
+  .feat h4{margin:0;font-size:15px;font-weight:700;color:var(--teal-900)}
+  .feat p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+
+  /* ---------- ESCAPE TO PARADISE (big image block) ---------- */
+  .escape{
+    position:relative;height:600px;border-radius:20px;overflow:hidden;
+    background:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2000&q=80') center/cover;
+    color:#fff;display:flex;align-items:flex-end;
+    box-shadow:var(--shadow-lg);
+  }
+  .escape::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,rgba(7,45,56,.85) 0%,rgba(7,45,56,.3) 55%,transparent 80%);
+  }
+  .escape-content{position:relative;z-index:2;padding:56px;max-width:560px}
+  .escape-content .meta{font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.8;margin-bottom:14px}
+  .escape-content h3{
+    font-family:'Bebas Neue',sans-serif;font-weight:400;
+    font-size:clamp(54px,7vw,92px);line-height:.95;letter-spacing:.01em;margin:0 0 18px;
+  }
+  .escape-content h3 em{font-family:'Fraunces',serif;font-style:italic;font-size:.7em;color:var(--coral)}
+  .escape-content p{opacity:.88;max-width:440px;margin:0 0 28px;font-size:15px}
+  .btn-coral{
+    background:var(--coral);color:#fff;padding:14px 26px;border-radius:999px;
+    font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:10px;transition:background .2s,transform .1s;
+  }
+  .btn-coral:hover{background:var(--coral-dark)}
+  .btn-coral:active{transform:scale(.98)}
+  .btn-ghost{
+    color:#fff;padding:14px 26px;border-radius:999px;border:1px solid rgba(255,255,255,.4);
+    font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:10px;margin-left:10px;
+    transition:background .2s;
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,.15)}
+
+  .escape-badge{
+    position:absolute;top:28px;right:28px;z-index:2;
+    display:flex;gap:8px;align-items:center;
+    background:rgba(255,255,255,.14);backdrop-filter:blur(10px);
+    padding:10px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.2);
+    font-size:12px;letter-spacing:.12em;font-weight:600;
+  }
+  .escape-badge .live{width:7px;height:7px;border-radius:50%;background:#9be5a7;box-shadow:0 0 0 4px rgba(155,229,167,.25)}
+
+  /* ---------- PACKAGE CARDS (secondary) ---------- */
+  .pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+  .pkg{
+    background:#fff;border-radius:var(--radius);overflow:hidden;
+    border:1px solid var(--line);box-shadow:var(--shadow-sm);
+    display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s;
+  }
+  .pkg:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+  .pkg .img{aspect-ratio:16/10;background:#ddd center/cover}
+  .pkg .body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .pkg .row{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:600}
+  .pkg .row .dur{color:var(--teal-700)}
+  .pkg h4{font-family:'Bebas Neue',sans-serif;font-size:26px;font-weight:400;letter-spacing:.04em;margin:2px 0 0;color:var(--teal-900);line-height:1.05}
+  .pkg p{margin:0;color:var(--ink-2);font-size:14px;flex:1}
+  .pkg .foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:18px;border-top:1px solid var(--line)}
+  .pkg .price{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--teal-900);letter-spacing:.03em}
+  .pkg .price small{font-family:'Manrope',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);display:block;font-weight:600;margin-bottom:-4px}
+  .pkg .book{background:var(--teal-800);color:#fff;padding:10px 18px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.08em;transition:background .2s}
+  .pkg .book:hover{background:var(--teal-900)}
+  .pkg .rating{display:flex;align-items:center;gap:6px;color:var(--ink-2);font-size:13px;font-weight:600;text-transform:none;letter-spacing:0}
+  .pkg .rating .star{color:var(--coral)}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testi{
+    background:var(--teal-900);color:#fff;padding:120px 0;
+    position:relative;overflow:hidden;
+  }
+  .testi::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(1000px 500px at 20% 10%,rgba(31,138,161,.35),transparent 60%),
+      radial-gradient(800px 400px at 90% 90%,rgba(232,99,74,.18),transparent 60%);
+    pointer-events:none;
+  }
+  .testi .wrap{position:relative}
+  .testi h2{color:#fff}
+  .testi .kicker{color:rgba(255,255,255,.7)}
+  .testi .kicker::before{background:var(--coral)}
+  .t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .t-card{
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--radius);padding:32px;
+    display:flex;flex-direction:column;gap:18px;
+    backdrop-filter:blur(6px);
+  }
+  .t-card .quote{font-family:'Fraunces',serif;font-size:20px;line-height:1.4;color:#fff}
+  .t-card .person{display:flex;align-items:center;gap:14px;margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}
+  .t-card .av{width:44px;height:44px;border-radius:50%;background:#aaa center/cover;border:2px solid rgba(255,255,255,.3)}
+  .t-card .name{font-weight:700;font-size:14px}
+  .t-card .trip{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:2px}
+  .t-card .stars{color:var(--coral);letter-spacing:2px;font-size:14px}
+
+  /* ---------- FEATURED: KOREA / FULL BLEED ---------- */
+  .fbleed{
+    height:520px;position:relative;overflow:hidden;color:#fff;
+    background:url('https://images.unsplash.com/photo-1538485399081-7c8970d5cdb3?w=2200&q=80') center/cover;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+  }
+  .fbleed::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,45,56,.35),rgba(7,45,56,.55))}
+  .fbleed .c{position:relative;z-index:2;max-width:680px;padding:0 20px}
+  .fbleed h3{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(48px,7vw,96px);letter-spacing:.02em;line-height:.95;margin:16px 0}
+  .fbleed p{opacity:.85;max-width:520px;margin:0 auto 26px;font-size:15px}
+
+  /* ---------- FAQ ---------- */
+  .faq-wrap{max-width:820px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--line);padding:22px 4px}
+  .faq-q{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Manrope',sans-serif;font-size:17px;font-weight:600;color:var(--teal-900);
+    cursor:pointer;width:100%;text-align:left;
+  }
+  .faq-a{
+    color:var(--ink-2);font-size:14.5px;line-height:1.6;
+    max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;
+  }
+  .faq-item.open .faq-a{max-height:200px;padding-top:14px}
+  .faq-q .plus{
+    width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
+    display:grid;place-items:center;font-size:16px;color:var(--teal-700);
+    transition:transform .3s,background .2s;flex-shrink:0;
+  }
+  .faq-item.open .faq-q .plus{transform:rotate(45deg);background:var(--teal-50)}
+
+  /* ---------- CTA ---------- */
+  .cta{
+    margin:0 28px;padding:90px 40px;border-radius:24px;
+    background:
+      linear-gradient(135deg,rgba(7,45,56,.82),rgba(10,74,92,.72)),
+      url('https://images.unsplash.com/photo-1519046904884-53103b34b206?w=2000&q=80') center/cover;
+    color:#fff;text-align:center;position:relative;overflow:hidden;
+    box-shadow:var(--shadow-lg);
+  }
+  .cta h2{color:#fff}
+  .cta p{max-width:520px;margin:16px auto 32px;opacity:.85;font-size:15.5px}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--teal-900);color:rgba(255,255,255,.75);
+    padding:80px 0 30px;margin-top:80px;position:relative;
+  }
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:48px}
+  .foot-grid h5{color:#fff;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;margin:0 0 18px;font-weight:700}
+  .foot-grid a{display:block;padding:5px 0;font-size:14px;transition:color .2s}
+  .foot-grid a:hover{color:#fff}
+  .foot-about p{font-size:14px;line-height:1.6;margin:14px 0 22px}
+  .foot-social{display:flex;gap:10px}
+  .foot-social a{
+    width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.18);
+    display:grid;place-items:center;padding:0;
+  }
+  .foot-social a:hover{background:rgba(255,255,255,.1)}
+  .foot-bottom{
+    margin-top:60px;padding-top:26px;border-top:1px solid rgba(255,255,255,.1);
+    display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+    color:rgba(255,255,255,.55);
+  }
+
+  /* ---------- UTIL / TWEAKS PANEL ---------- */
+  .tweaks{
+    position:fixed;right:20px;bottom:20px;z-index:100;
+    background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.25);
+    padding:18px;width:260px;display:none;font-size:13px;
+    border:1px solid var(--line);
+  }
+  .tweaks.on{display:block}
+  .tweaks h6{margin:0 0 10px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-700)}
+  .tweak-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .tweak-row label{color:var(--ink-2);font-size:12.5px}
+  .tweak-row input[type=color]{width:36px;height:26px;border:none;background:none;padding:0}
+  .tweak-row select, .tweak-row input[type=range]{font-size:12px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:#fff}
+
+  svg{flex-shrink:0}
+
+  @media(max-width:960px){
+    .dest-grid{grid-template-columns:repeat(2,1fr)}
+    .pkg-grid,.t-grid,.feat-grid{grid-template-columns:1fr}
+    .search{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:36px}
+    .nav-links{display:none}
+    h1.display{font-size:72px}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="wrap">
+    <a href="#" class="logo">
+      <span class="logo-dot"></span>
+      MERIDIANO
+    </a>
+    <div class="nav-links">
+      <a href="#">Destinations</a>
+      <a href="#">Journeys</a>
+      <a href="#">Experiences</a>
+      <a href="#">Guides</a>
+      <a href="#">Journal</a>
+    </div>
+    <a href="#" class="nav-cta">Sign in →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner wrap">
+    <span class="eyebrow"><span class="dot"></span> Spring Collection — 2026</span>
+    <h1 class="display">
+      ADVENTURE
+      <span class="soft">is calling your name</span>
+    </h1>
+    <p class="hero-sub">Hand-crafted journeys to 62 countries, led by locals who know the shortcuts the guidebooks missed. Flight, stay, and the secret parts — in one price.</p>
+
+    <!-- search -->
+    <div class="search">
+      <button class="field">
+        <span class="lbl">Where to</span>
+        <span class="val">Faroe Islands</span>
+      </button>
+      <button class="field">
+        <span class="lbl">When</span>
+        <span class="val">May 4 – May 11</span>
+      </button>
+      <button class="field">
+        <span class="lbl">Travellers</span>
+        <span class="val">2 adults</span>
+      </button>
+      <button class="search-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        EXPLORE
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-stats wrap" style="padding-left:28px;padding-right:28px">
+    <div class="stat"><div class="num">62</div><div class="lbl">Countries</div></div>
+    <div class="stat"><div class="num">240+</div><div class="lbl">Itineraries</div></div>
+    <div class="stat"><div class="num">11,400</div><div class="lbl">Travellers a year</div></div>
+    <div class="stat"><div class="num">4.92 ★</div><div class="lbl">Avg. rating</div></div>
+  </div>
+</header>
+
+<!-- POPULAR DESTINATIONS -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Popular Destinations</div>
+        <h2>Where travellers<br>are going <span class="ital">this season.</span></h2>
+      </div>
+      <p>Sixty-two countries, one restless planet. These are the places our guests keep returning to — and the ones we keep discovering.</p>
+    </div>
+    <div class="dest-grid">
+      <div class="dest">
+        <span class="tag">Greek Isles</span>
+        <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=900&q=80" alt="Santorini">
+        <div class="info">
+          <div>
+            <div class="place">SANTORINI</div>
+            <div class="country">Greece</div>
+          </div>
+          <span class="price">from €1,290</span>
+        </div>
+      </div>
+      <div class="dest">
+        <span class="tag">Volcanic</span>
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900&q=80" alt="Japan">
+        <div class="info">
+          <div>
+            <div class="place">KYOTO</div>
+            <div class="country">Japan</div>
+          </div>
+          <span class="price">from €2,140</span>
+        </div>
+      </div>
+      <div class="dest">
+        <span class="tag">Coastal</span>
+        <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=900&q=80" alt="Venice">
+        <div class="info">
+          <div>
+            <div class="place">AMALFI</div>
+            <div class="country">Italy</div>
+          </div>
+          <span class="price">from €1,560</span>
+        </div>
+      </div>
+      <div class="dest">
+        <span class="tag">Desert</span>
+        <img src="https://images.unsplash.com/photo-1489493887464-892be6d1daae?w=900&q=80" alt="Morocco">
+        <div class="info">
+          <div>
+            <div class="place">MARRAKECH</div>
+            <div class="country">Morocco</div>
+          </div>
+          <span class="price">from €980</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="wrap">
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+        <h4>Locally guided</h4>
+        <p>Every trip is led by a resident — not a tour-shop pro from three time zones away.</p>
+      </div>
+      <div class="feat">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7 9 18l-5-5"/></svg></div>
+        <h4>Flat, honest pricing</h4>
+        <p>Flights, stays, transfers, most meals. No "resort fees," no upsells at 2am.</p>
+      </div>
+      <div class="feat">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-12a8 8 0 1 1 16 0c0 7.5-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <h4>Small groups</h4>
+        <p>Max 12 travellers. You'll remember names by day two, stories by day five.</p>
+      </div>
+      <div class="feat">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div>
+        <h4>Free re-book</h4>
+        <p>Life happens. Move your dates once, up to 30 days before departure. No fee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ESCAPE TO PARADISE -->
+<section style="padding-top:110px;padding-bottom:40px">
+  <div class="wrap">
+    <div class="escape">
+      <div class="escape-badge"><span class="live"></span> 4 spots left · Departs May 12</div>
+      <div class="escape-content">
+        <div class="meta">★ Featured journey · 9 nights</div>
+        <h3>ESCAPE<br>to <em>paradise</em></h3>
+        <p>Sail between uninhabited islands in the Andaman Sea on a hand-built teak liveaboard. Mornings in mangrove lagoons, afternoons diving limestone arches, nights under more stars than you believed existed.</p>
+        <a class="btn-coral" href="#">Explore the voyage →</a>
+        <a class="btn-ghost" href="#">Dates & pricing</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section style="padding-top:80px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Signature Journeys</div>
+        <h2>Curated trips,<br>not <span class="ital">package tours.</span></h2>
+      </div>
+      <a class="link-more" href="#">All journeys →</a>
+    </div>
+    <div class="pkg-grid">
+      <article class="pkg">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1200&q=80')"></div>
+        <div class="body">
+          <div class="row"><span class="dur">12 NIGHTS</span><span>ITALY · SLOW TRAVEL</span></div>
+          <h4>Tuscan Back Roads</h4>
+          <p>A three-vineyard ride through Chianti and Val d'Orcia with a Michelin chef who cooks dinner on the final night.</p>
+          <div class="foot">
+            <div class="price"><small>From</small>€2,480</div>
+            <div class="rating"><span class="star">★</span> 4.97</div>
+            <a href="#" class="book">BOOK</a>
+          </div>
+        </div>
+      </article>
+      <article class="pkg">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80')"></div>
+        <div class="body">
+          <div class="row"><span class="dur">8 NIGHTS</span><span>PATAGONIA · HIKING</span></div>
+          <h4>Torres del Paine Traverse</h4>
+          <p>The full "W" with a crew that has been trail-breaking since 2003. Glacier day, gaucho dinner, ice-cold mountain beer.</p>
+          <div class="foot">
+            <div class="price"><small>From</small>€3,190</div>
+            <div class="rating"><span class="star">★</span> 4.88</div>
+            <a href="#" class="book">BOOK</a>
+          </div>
+        </div>
+      </article>
+      <article class="pkg">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1528181304800-259b08848526?w=1200&q=80')"></div>
+        <div class="body">
+          <div class="row"><span class="dur">6 NIGHTS</span><span>ICELAND · WINTER</span></div>
+          <h4>Northern Lights &amp; Lava</h4>
+          <p>Chase the aurora across the south coast with an astrophotographer who'll teach you to shoot it properly.</p>
+          <div class="foot">
+            <div class="price"><small>From</small>€2,050</div>
+            <div class="rating"><span class="star">★</span> 4.91</div>
+            <a href="#" class="book">BOOK</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Travellers' Log</div>
+        <h2 style="color:#fff">Stories from<br>the <span class="ital">road.</span></h2>
+      </div>
+      <p style="color:rgba(255,255,255,.7)">We asked 1,400 guests what they remember a year after they got home. These are the answers that kept showing up.</p>
+    </div>
+    <div class="t-grid">
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <div class="quote">"Our guide, Eita, took us to a ramen shop her grandmother used to work at. It's not on any map. That was the whole trip, summed up in one bowl."</div>
+        <div class="person">
+          <div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80')"></div>
+          <div><div class="name">Hannah K.</div><div class="trip">Kyoto · 9 nights</div></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <div class="quote">"I've booked four trips since. Every time the logistics are so quiet you almost don't notice them, and that's the point. You just travel."</div>
+        <div class="person">
+          <div class="av" style="background-image:url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80')"></div>
+          <div><div class="name">Marcus O.</div><div class="trip">Repeat · 4 journeys</div></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <div class="quote">"Two weeks after we got back, the itinerary arrived as a hand-bound book in the mail. I cried. My husband pretended he didn't."</div>
+        <div class="person">
+          <div class="av" style="background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&q=80')"></div>
+          <div><div class="name">Priya &amp; Tom R.</div><div class="trip">Morocco · 11 nights</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL BLEED FEATURE -->
+<div class="fbleed">
+  <div class="c">
+    <div class="kicker" style="color:rgba(255,255,255,.8);justify-content:center;display:inline-flex">Destination spotlight · Korea</div>
+    <h3>Seoul, slowly.</h3>
+    <p>Seven days of hanok stays, palace mornings, and Itaewon nights with a chef-led market crawl that's become the trip everyone asks us to repeat.</p>
+    <a href="#" class="btn-coral">Read the itinerary →</a>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section>
+  <div class="wrap">
+    <div class="section-head" style="justify-content:center;text-align:center;flex-direction:column;align-items:center">
+      <div>
+        <div class="kicker" style="justify-content:center">Frequently Asked</div>
+        <h2 style="text-align:center">Before you <span class="ital">go.</span></h2>
+      </div>
+    </div>
+    <div class="faq-wrap">
+      <div class="faq-item open">
+        <button class="faq-q">What's actually included in the price?<span class="plus">+</span></button>
+        <div class="faq-a">Round-trip flights from your home airport, all lodging (usually boutique hotels or locally-owned stays), in-country transfers, your guide, most dinners, and the "secret parts" — the things you can only book if you know someone. Travel insurance is not included but we can add it for €120.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How big are the groups?<span class="plus">+</span></button>
+        <div class="faq-a">Never more than 12 travellers, and often 6–8. Private departures start at four guests.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What if I need to cancel or change dates?<span class="plus">+</span></button>
+        <div class="faq-a">Free date changes up to 30 days before departure. Full refunds up to 60 days out. Within 30 days we offer trip credit valid for 24 months.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do you cater to solo travellers?<span class="plus">+</span></button>
+        <div class="faq-a">Around 40% of our guests travel solo. No single supplement on most departures, and we pair rooms thoughtfully if you'd like to share.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is this suitable for first-time international travellers?<span class="plus">+</span></button>
+        <div class="faq-a">Absolutely. We handle visas, transfers, and the bureaucratic side entirely — you'll get a pre-departure call two weeks out with your guide to walk through everything.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:40px 0 0">
+  <div class="cta">
+    <div class="kicker" style="color:rgba(255,255,255,.75);justify-content:center;display:inline-flex">Ready?</div>
+    <h2 style="margin-top:8px">START YOUR<br><span class="ital">adventure.</span></h2>
+    <p>Tell us a country, a length, and a month — we'll send three itineraries back within 48 hours. No account needed.</p>
+    <a href="#" class="btn-coral">Plan my trip →</a>
+    <a href="#" class="btn-ghost">Talk to a human</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-about">
+        <div class="logo" style="color:#fff"><span class="logo-dot"></span> MERIDIANO</div>
+        <p>A small team of travellers, guides and researchers based in Lisbon and Bangkok. We design journeys for people who'd rather know one place deeply than ten places briefly.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="m10 9 5 3-5 3V9z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Twitter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 5.8a8 8 0 0 1-2.4.7 4 4 0 0 0 1.8-2.2 8 8 0 0 1-2.6 1 4 4 0 0 0-6.9 3.7A11.6 11.6 0 0 1 3 4.6a4 4 0 0 0 1.3 5.4A4 4 0 0 1 2.5 9v.1a4 4 0 0 0 3.3 4 4 4 0 0 1-1.8.1 4 4 0 0 0 3.8 2.8A8 8 0 0 1 2 17.5 11.4 11.4 0 0 0 8.2 19c7.4 0 11.5-6.2 11.5-11.5v-.5A8.3 8.3 0 0 0 22 5.8z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a href="#">All destinations</a>
+        <a href="#">Signature journeys</a>
+        <a href="#">Private trips</a>
+        <a href="#">Gift cards</a>
+        <a href="#">Group travel</a>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <a href="#">About us</a>
+        <a href="#">Our guides</a>
+        <a href="#">Responsible travel</a>
+        <a href="#">Journal</a>
+        <a href="#">Careers</a>
+      </div>
+      <div>
+        <h5>Help</h5>
+        <a href="#">Contact</a>
+        <a href="#">Travel insurance</a>
+        <a href="#">Booking policies</a>
+        <a href="#">FAQs</a>
+        <a href="#">Press</a>
+      </div>
+      <div>
+        <h5>Newsletter</h5>
+        <p style="font-size:14px;margin:0 0 14px">A dispatch every other Thursday. Four stories, one trip idea, zero spam.</p>
+        <form style="display:flex;gap:6px" onsubmit="event.preventDefault();this.querySelector('button').textContent='Thanks ✓'">
+          <input type="email" placeholder="you@email.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:10px 14px;color:#fff;font-family:inherit;font-size:13px;outline:none"/>
+          <button style="background:var(--coral);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;font-size:12px;letter-spacing:.1em">JOIN</button>
+        </form>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Meridiano Travel Co. · Lisbon · Bangkok</span>
+      <span>Privacy · Terms · Cookies</span>
+    </div>
+  </div>
+</footer>
+
+<!-- TWEAKS -->
+<div class="tweaks" id="tweaks">
+  <h6>Tweaks</h6>
+  <div class="tweak-row">
+    <label>Primary teal</label>
+    <input type="color" id="tw-teal" value="#0a4a5c"/>
+  </div>
+  <div class="tweak-row">
+    <label>Accent</label>
+    <input type="color" id="tw-coral" value="#e8634a"/>
+  </div>
+  <div class="tweak-row">
+    <label>Hero image</label>
+    <select id="tw-hero">
+      <option value="1506929562872-bb421503ef21">Turquoise coast</option>
+      <option value="1469521669194-babb45599def">Mountain lake</option>
+      <option value="1507525428034-b723cf961d3e">Tropical beach</option>
+      <option value="1492571350019-22de08371fd3">Desert dunes</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <label>Headline</label>
+    <select id="tw-headline">
+      <option>ADVENTURE</option>
+      <option>WANDERLUST</option>
+      <option>HORIZONS</option>
+      <option>ELSEWHERE</option>
+    </select>
+  </div>
+</div>
+
+<script>
+  /* FAQ */
+  document.querySelectorAll('.faq-q').forEach(q=>{
+    q.addEventListener('click',()=>q.parentElement.classList.toggle('open'));
+  });
+
+  /* TWEAKS wiring */
+  const TWEAKS = /*EDITMODE-BEGIN*/{
+    "teal": "#0a4a5c",
+    "coral": "#e8634a",
+    "hero": "1506929562872-bb421503ef21",
+    "headline": "ADVENTURE"
+  }/*EDITMODE-END*/;
+
+  function applyTweaks(t){
+    document.documentElement.style.setProperty('--teal-800',t.teal);
+    document.documentElement.style.setProperty('--coral',t.coral);
+    document.querySelector('.hero').style.background =
+      `linear-gradient(180deg, rgba(7,45,56,.35) 0%, rgba(7,45,56,.55) 60%, rgba(7,45,56,.85) 100%),
+       url('https://images.unsplash.com/photo-${t.hero}?w=2000&q=80') center/cover`;
+    const h = document.querySelector('h1.display');
+    h.childNodes[0].nodeValue = t.headline;
+  }
+  applyTweaks(TWEAKS);
+
+  const panel = document.getElementById('tweaks');
+  window.addEventListener('message',(e)=>{
+    if(e.data?.type==='__activate_edit_mode') panel.classList.add('on');
+    if(e.data?.type==='__deactivate_edit_mode') panel.classList.remove('on');
+  });
+  window.parent.postMessage({type:'__edit_mode_available'},'*');
+
+  ['tw-teal','tw-coral','tw-hero','tw-headline'].forEach(id=>{
+    const el = document.getElementById(id);
+    const key = id.replace('tw-','');
+    el.value = TWEAKS[key];
+    el.addEventListener('input',()=>{
+      TWEAKS[key] = el.value;
+      applyTweaks(TWEAKS);
+      window.parent.postMessage({type:'__edit_mode_set_keys',edits:{[key]:el.value}},'*');
+    });
+  });
+</script>
+</body>
+</html>

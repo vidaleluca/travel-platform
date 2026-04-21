@@ -87,6 +87,37 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .lang-switch button{padding:5px 10px;border-radius:999px;color:inherit}
 .lang-switch button.on{background:var(--teal-800);color:#fff}
 .st-nav.on-hero .lang-switch button.on{background:#fff;color:var(--teal-900)}
+
+/* ---------- CITY SWITCHER ---------- */
+.city-switch{position:relative;margin-left:8px}
+.city-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 12px;border:1px solid var(--line);border-radius:999px;
+  font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--teal-900);
+  background:#fff;transition:background .2s,border-color .2s;
+}
+.city-btn:hover{border-color:var(--teal-700)}
+.st-nav.on-hero .city-btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff;backdrop-filter:blur(8px)}
+.st-nav.on-hero .city-btn:hover{background:rgba(255,255,255,.22)}
+.city-drop{
+  position:absolute;top:calc(100% + 10px);left:0;
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 20px 50px rgba(7,45,56,.18);
+  padding:8px;min-width:260px;
+  opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .15s,transform .15s;
+  z-index:60;
+}
+.city-drop.on{opacity:1;transform:translateY(0);pointer-events:auto}
+.city-drop a{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;
+  padding:10px 14px;border-radius:8px;font-size:13.5px;color:var(--teal-900);font-weight:600;
+  transition:background .15s;
+}
+.city-drop a:hover{background:var(--teal-50)}
+.city-drop a small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-700);font-weight:700}
+.city-drop a.soon small{color:var(--mute)}
+.city-drop .city-sep{height:1px;background:var(--line);margin:6px 4px}
+.city-drop a.all{color:var(--coral);justify-content:flex-start;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
 .nav-cta{
   background:var(--coral);color:#fff;padding:10px 18px;border-radius:999px;
   font-size:13px;font-weight:700;letter-spacing:.04em;transition:background .2s;

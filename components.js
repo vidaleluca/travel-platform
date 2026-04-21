@@ -4,10 +4,25 @@
   <nav class="st-nav ${onHero?'on-hero':''}">
     <div class="wrap">
       <a href="index.html" class="logo"><span class="logo-mark"></span> SOCIALTRAVELS</a>
+      <div class="city-switch" id="citySwitch">
+        <button class="city-btn" id="cityBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="cityLabel">Rome</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="city-drop" id="cityDrop">
+          <a href="SocialTravels.html" data-city="rome"><span>Rome</span><small>Italy · live</small></a>
+          <a href="#" data-city="milan" class="soon"><span>Milan</span><small>Coming soon</small></a>
+          <a href="#" data-city="florence" class="soon"><span>Florence</span><small>Coming soon</small></a>
+          <a href="#" data-city="venice" class="soon"><span>Venice</span><small>Coming soon</small></a>
+          <a href="#" data-city="naples" class="soon"><span>Naples</span><small>Coming soon</small></a>
+          <div class="city-sep"></div>
+          <a href="index.html" class="all">All cities →</a>
+        </div>
+      </div>
       <div class="nav-links">
-        <a href="index.html" data-i18n="nav.destinations" class="${activePage==='home'?'active':''}">Experiences</a>
+        <a href="SocialTravels.html" data-i18n="nav.destinations" class="${activePage==='home'?'active':''}">Experiences</a>
         <a href="Category.html" data-i18n="nav.categories" class="${activePage==='cat'?'active':''}">Categories</a>
-        <a href="Experience.html" data-i18n="nav.rome" class="${activePage==='exp'?'active':''}">Rome</a>
         <a href="#" data-i18n="nav.journal">Journal</a>
       </div>
       <div class="nav-right">
@@ -89,14 +104,6 @@
       <label>Accent</label>
       <input type="color" id="tw-coral" value="#e8634a"/>
     </div>
-    <div class="tweaks-divider"></div>
-    <div class="tweak-row">
-      <label>Hero layout</label>
-      <select id="tw-hero-layout">
-        <option value="A">A — Centered hero + search</option>
-        <option value="B">B — Split hero + category sidebar</option>
-      </select>
-    </div>
   </div>`;
 
   window.STComponents = {
@@ -105,6 +112,27 @@
       el.innerHTML = NAV_HTML(activePage, onHero);
       document.body.insertBefore(el.firstElementChild, document.body.firstChild);
       window.STI18N && window.STI18N.applyLang();
+      // city switcher
+      const savedCity = localStorage.getItem('st_city') || 'rome';
+      const cityNames = {rome:'Rome',milan:'Milan',florence:'Florence',venice:'Venice',naples:'Naples'};
+      const lbl = document.getElementById('cityLabel');
+      if(lbl) lbl.textContent = cityNames[savedCity] || 'Rome';
+      const btn = document.getElementById('cityBtn');
+      const drop = document.getElementById('cityDrop');
+      if(btn && drop){
+        btn.addEventListener('click',e=>{e.stopPropagation();drop.classList.toggle('on')});
+        document.addEventListener('click',()=>drop.classList.remove('on'));
+        drop.querySelectorAll('a[data-city]').forEach(a=>{
+          a.addEventListener('click',e=>{
+            const city = a.dataset.city;
+            localStorage.setItem('st_city',city);
+            if(a.classList.contains('soon')){
+              e.preventDefault();
+              a.innerHTML = '<span>'+cityNames[city]+'</span><small>Launching Q3 2026 — notify me ✓</small>';
+            }
+          });
+        });
+      }
     },
     mountFooter(){
       const el = document.createElement('div');
@@ -118,11 +146,10 @@
       document.body.appendChild(el.firstElementChild);
 
       // persisted state
-      const DEF = window.ST_TWEAKS || {teal:'#0a4a5c',coral:'#e8634a',hero_layout:'A'};
+      const DEF = window.ST_TWEAKS || {teal:'#0a4a5c',coral:'#e8634a'};
       function apply(t){
         document.documentElement.style.setProperty('--teal-800',t.teal);
         document.documentElement.style.setProperty('--coral',t.coral);
-        if(opts && opts.onHeroLayout) opts.onHeroLayout(t.hero_layout);
       }
       apply(DEF);
       const panel = document.getElementById('tweaks');
@@ -144,7 +171,6 @@
       };
       bind('tw-teal','teal');
       bind('tw-coral','coral');
-      bind('tw-hero-layout','hero_layout');
     }
   };
 })();
